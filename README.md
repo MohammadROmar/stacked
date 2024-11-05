@@ -1,6 +1,8 @@
-#
+# Stacked
 
-## Technologies:
+## How to play
+
+### Technologies:
 
 - React.js.
 - Tailwind CSS.
