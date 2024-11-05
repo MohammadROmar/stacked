@@ -1,20 +1,22 @@
-import { Game } from './game';
+import { Game } from './game/game';
 import type { GameGrid } from '../types/game';
 import { controlKeys } from '../data/contol-keys';
 
 export class Controls {
   public game: Game;
-  public setGrid: (grid: GameGrid) => void;
-  public setDidWin: (didWin: boolean) => void;
+  public updateGrid: (grid: GameGrid) => void;
+  public didWin: (didWin: boolean) => void;
+  private startX: number = 0;
+  private startY: number = 0;
 
   constructor(
     game: Game,
-    setGrid: (grid: GameGrid) => void,
-    setDidWin: (didWin: boolean) => void
+    updateGrid: (grid: GameGrid) => void,
+    didWin: (didWin: boolean) => void
   ) {
     this.game = game;
-    this.setGrid = setGrid;
-    this.setDidWin = setDidWin;
+    this.updateGrid = updateGrid;
+    this.didWin = didWin;
 
     this.setupControls();
   }
@@ -25,193 +27,79 @@ export class Controls {
   }
 
   mobileControls() {
-    let startX: number = 0;
-    let startY: number = 0;
-
-    document.addEventListener('touchstart', (event) => {
-      startX = event.touches[0].clientX;
-      startY = event.touches[0].clientY;
+    document.addEventListener('touchstart', this.touchStartEvent);
+    document.addEventListener('touchmove', this.touchMoveEvent, {
+      passive: false,
     });
-
-    document.addEventListener(
-      'touchmove',
-      (event) => {
-        event.preventDefault();
-
-        const moveX = event.touches[0].clientX;
-        const moveY = event.touches[0].clientY;
-
-        const deltaX = moveX - startX;
-        const deltaY = moveY - startY;
-
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          if (deltaX > 0) {
-            this.game.moveRight();
-          } else {
-            this.game.moveLeft();
-          }
-        } else {
-          if (deltaY > 0) {
-            this.game.moveDown();
-          } else {
-            this.game.moveUp();
-          }
-        }
-
-        this.updateGameState();
-      },
-      { passive: false }
-    );
   }
 
-  keyboardControls() {
-    document.addEventListener('keydown', (event) => {
-      const key = event.key;
+  touchStartEvent = (event: TouchEvent) => {
+    this.startX = event.touches[0].clientX;
+    this.startY = event.touches[0].clientY;
+  };
 
-      if (!controlKeys.includes(key)) {
-        return;
-      }
+  touchMoveEvent = (event: TouchEvent) => {
+    event.preventDefault();
 
-      if (key === 'ArrowUp' || key === 'w' || key === 'W') {
-        this.game.moveUp();
-      }
+    const moveX = event.touches[0].clientX;
+    const moveY = event.touches[0].clientY;
 
-      if (key === 'ArrowRight' || key === 'd' || key === 'D') {
+    const deltaX = moveX - this.startX;
+    const deltaY = moveY - this.startY;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX > 0) {
         this.game.moveRight();
-      }
-
-      if (key === 'ArrowDown' || key === 's' || key === 'S') {
-        this.game.moveDown();
-      }
-
-      if (key === 'ArrowLeft' || key === 'a' || key === 'A') {
+      } else {
         this.game.moveLeft();
       }
+    } else {
+      if (deltaY > 0) {
+        this.game.moveDown();
+      } else {
+        this.game.moveUp();
+      }
+    }
 
-      this.updateGameState();
-    });
+    this.updateGameState();
+  };
+
+  keyboardControls() {
+    document.addEventListener('keydown', this.keydownEvent);
   }
 
+  keydownEvent = (event: KeyboardEvent) => {
+    const key = event.key;
+
+    if (!controlKeys.includes(key)) {
+      return;
+    }
+
+    if (key === 'ArrowUp' || key === 'w' || key === 'W') {
+      this.game.moveUp();
+    } else if (key === 'ArrowRight' || key === 'd' || key === 'D') {
+      this.game.moveRight();
+    } else if (key === 'ArrowDown' || key === 's' || key === 'S') {
+      this.game.moveDown();
+    } else if (key === 'ArrowLeft' || key === 'a' || key === 'A') {
+      this.game.moveLeft();
+    }
+
+    this.updateGameState();
+  };
+
   updateGameState() {
-    this.setGrid([...this.game.grid]);
+    this.updateGrid([...this.game.grid]);
 
     if (this.game.didWin()) {
       this.removeControls();
-      this.setDidWin(true);
+      this.didWin(true);
     }
   }
 
   removeControls() {
-    document.removeEventListener('keydown', () => {});
-    document.removeEventListener('touchstart', () => {});
-    document.removeEventListener('touchmove', () => {});
+    document.removeEventListener('keydown', this.keydownEvent);
+    document.removeEventListener('touchstart', this.touchStartEvent);
+    document.removeEventListener('touchmove', this.touchMoveEvent);
   }
 }
-
-// import { Game } from './game';
-// import type { GameGrid } from '../types/game';
-// import { controlKeys } from '../data/contol-keys';
-
-// export class Controls {
-//   public game: Game;
-//   public setGrid: (grid: GameGrid) => void;
-//   public setDidWin: (didWin: boolean) => void;
-
-//   constructor(
-//     game: Game,
-//     setGrid: (grid: GameGrid) => void,
-//     setDidWin: (didWin: boolean) => void
-//   ) {
-//     this.game = game;
-//     this.setGrid = setGrid;
-//     this.setDidWin = setDidWin;
-
-//     this.setupControls();
-//   }
-
-//   setupControls() {
-//     this.mobileControls();
-//     this.keyboardControls();
-//   }
-
-//   mobileControls() {
-//     let startX: number = 0;
-//     let startY: number = 0;
-
-//     document.addEventListener('touchstart', (event) => {
-//       startX = event.touches[0].clientX;
-//       startY = event.touches[0].clientY;
-//     });
-
-//     document.addEventListener(
-//       'touchmove',
-//       (event) => {
-//         event.preventDefault();
-
-//         const moveX = event.touches[0].clientX;
-//         const moveY = event.touches[0].clientY;
-
-//         const deltaX = moveX - startX;
-//         const deltaY = moveY - startY;
-
-//         if (Math.abs(deltaX) > Math.abs(deltaY)) {
-//           if (deltaX > 0) {
-//             this.game.moveRight();
-//           } else {
-//             this.game.moveLeft();
-//           }
-//         } else {
-//           if (deltaY > 0) {
-//             this.game.moveDown();
-//           } else {
-//             this.game.moveUp();
-//           }
-//         }
-
-//         this.updateGameState();
-//       },
-//       { passive: false }
-//     );
-//   }
-
-//   keyboardControls() {
-//     console.log(this);
-//     document.addEventListener('keydown', this.keyoardListener);
-//   }
-
-//   keyoardListener(event: KeyboardEvent) {
-//     console.log(this);
-//     const key = event.key;
-
-//     if (!controlKeys.includes(key)) {
-//       return;
-//     }
-
-//     if (key === 'ArrowUp' || key === 'w' || key === 'W') {
-//       this.game.moveUp();
-//     } else if (key === 'ArrowRight' || key === 'd' || key === 'D') {
-//       this.game.moveRight();
-//     } else if (key === 'ArrowDown' || key === 's' || key === 'S') {
-//       this.game.moveDown();
-//     } else if (key === 'ArrowLeft' || key === 'a' || key === 'A') {
-//       this.game.moveLeft();
-//     }
-
-//     this.updateGameState();
-//   }
-
-//   updateGameState() {
-//     this.setGrid([...this.game.grid]);
-
-//     if (this.game.didWin()) {
-//       this.removeControls();
-//       this.setDidWin(true);
-//     }
-//   }
-
-//   removeControls() {
-//     document.removeEventListener('keydown', this.keyoardListener);
-//     document.removeEventListener('touchstart', () => {});
-//     document.removeEventListener('touchmove', () => {});
-//   }
-// }

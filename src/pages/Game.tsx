@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Title from '../components/Title';
 import GameGrid from '../components/Game/Grid';
 import WinningModal from '../components/Game/WinningModal';
-import { Game } from '../classes/game';
+import { Game } from '../classes/game/game';
 import { Controls } from '../classes/controls';
 import type { Game as tGame } from '../types/game';
 
@@ -19,6 +19,7 @@ export default function GamePage({ gameData }: GamePageProps) {
 
   useEffect(() => {
     const game = new Game(rows, cols, initialGrid);
+
     new Controls(game, setGrid, setDidWin);
   }, []);
 

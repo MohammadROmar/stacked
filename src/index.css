@@ -7,15 +7,29 @@
     font-family: 'River Adventurer';
     src: url(./assets/fonts/river-adventurer.ttf);
   }
+
+  html {
+    scrollbar-width: none;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    display: none;
+    appearance: none;
+  }
+
+  input[type='number'] {
+    appearance: textfield;
+  }
 }
 
 @layer components {
   .section {
-    @apply border-black/20 border-2 w-full max-w-lg backdrop-blur-lg p-4 rounded-lg;
+    @apply border-black/20 border-2 w-full max-w-lg backdrop-blur-xl p-4 rounded-lg;
   }
 
   .game-grid {
-    @apply w-full grid gap-1 rounded-3xl bg-[#176ac3]/30 p-1;
+    @apply w-full grid gap-1 rounded-[2.5rem] bg-[#176ac3]/30 p-2;
   }
 
   .button {

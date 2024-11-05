@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { getImageName } from '../../utils/get-image-name';
 import type { Game, Symbol } from '../../types/game';
 import type { Dispatch, SetStateAction } from 'react';
-import { gameGridItamVariants } from '../../animation/variants/game-grid-itam';
+import { gameCellVariants } from '../../animation/variants/game-cell';
 import { staggeredListAnimation } from '../../animation/staggered-list';
 
 type InitGridProps = {
@@ -17,10 +17,11 @@ export default function Grid({
   changeGameData,
   selectedColor,
 }: InitGridProps) {
-  const { cols, grid } = gameData;
+  const { rows, cols, grid } = gameData;
 
   return (
     <motion.ul
+      key={rows + '' + cols}
       {...staggeredListAnimation}
       className="game-grid"
       style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
@@ -31,7 +32,7 @@ export default function Grid({
 
           return (
             <motion.li
-              variants={gameGridItamVariants}
+              variants={gameCellVariants}
               key={`${i} ${j} ${item}`}
               onClick={() => {
                 const newGrid = [...grid];

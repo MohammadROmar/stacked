@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 import { getImageName } from '../../utils/get-image-name';
-import { gameGridItamVariants } from '../../animation/variants/game-grid-itam';
+import { gameCellVariants } from '../../animation/variants/game-cell';
 import type { Symbol } from '../../types/game';
 
 type CellProps = {
@@ -12,7 +12,7 @@ export default function Cell({ item }: CellProps) {
   const imageName = getImageName(item);
 
   return (
-    <motion.li variants={gameGridItamVariants} transition={{ duration: 0.2 }}>
+    <motion.li variants={gameCellVariants} transition={{ duration: 0.2 }}>
       <img
         src={`/src/assets/images/colors/${imageName}.png`}
         className="w-full aspect-square object-cover object-center"

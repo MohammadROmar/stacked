@@ -1,4 +1,4 @@
-export const initialColorCellsCount = {
+export const initialCellsCount = {
   '.': null,
   '#': null,
   red: 0,

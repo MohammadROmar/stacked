@@ -18,11 +18,11 @@ export default function GameInitializer({
         <Input
           id="rows"
           value={rows.toString()}
-          onChange={(event) =>
+          onChange={(newValue) =>
             changeGameData((oldData) => ({
               ...oldData,
-              grid: generateInitialGrid(+event.target.value, oldData.cols),
-              rows: +event.target.value,
+              grid: generateInitialGrid(newValue, oldData.cols),
+              rows: newValue,
             }))
           }
         />
@@ -32,11 +32,11 @@ export default function GameInitializer({
         <Input
           id="columns"
           value={cols.toString()}
-          onChange={(event) =>
+          onChange={(newValue) =>
             changeGameData((oldData) => ({
               ...oldData,
-              grid: generateInitialGrid(oldData.rows, +event.target.value),
-              cols: +event.target.value,
+              grid: generateInitialGrid(oldData.rows, newValue),
+              cols: newValue,
             }))
           }
         />

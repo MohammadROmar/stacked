@@ -1,6 +1,6 @@
 import type { Variants } from 'framer-motion';
 
-export const gameGridItamVariants: Variants = {
+export const gameCellVariants: Variants = {
   initial: {
     opacity: 0,
     rotate: '45deg',

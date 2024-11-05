@@ -17,7 +17,9 @@ export default function GameGrid({ cols, grid }: GameGridProps) {
       style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
     >
       {grid.map((gridItems, i) =>
-        gridItems.map((item, j) => <Cell key={i + '' + j} item={item} />)
+        gridItems.map((item, j) => (
+          <Cell key={i + '' + j + '' + item} item={item} />
+        ))
       )}
     </motion.ul>
   );

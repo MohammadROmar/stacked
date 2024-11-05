@@ -9,14 +9,14 @@ type ColorsModalProps = {
 
 export default function ColorsModal({
   setSelectedColor,
-  setIsOpen,
+  setIsOpen
 }: ColorsModalProps) {
   return (
     <Modal>
       <h2 className="text-2xl">Select color</h2>
 
       <ul className="game-grid grid-cols-4 bg-transparent">
-        {symbols.map((symbol) => (
+        {symbols.map(symbol => (
           <li
             key={symbol}
             onClick={() => {
@@ -26,6 +26,7 @@ export default function ColorsModal({
           >
             <img
               src={`/src/assets/images/colors/${getImageName(symbol)}.png`}
+              className="aspect-square"
             />
           </li>
         ))}

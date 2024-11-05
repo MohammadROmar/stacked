@@ -3,6 +3,7 @@ import { useState } from 'react';
 import StartPage from './pages/Start';
 import InitializeGridPage from './pages/InitializeGrid';
 import GamePage from './pages/Game';
+import HowToPlayBtn from './components/HowToPlayBtn';
 import { generateInitialGrid } from './utils/generate-initial-grid';
 import type { Page } from './types/page';
 import type { Game } from './types/game';
@@ -16,7 +17,7 @@ function App() {
   });
 
   return (
-    <main className="h-[100dvh] bg-[url(./assets/images/background.jpg)] bg-center bg-cover bg-no-repeat bg-clip-border flex justify-center items-center p-8 text-white font-river-adventurer">
+    <main className="min-h-screen bg-[url(./assets/images/background.jpg)] bg-center bg-cover bg-no-repeat bg-clip-border flex justify-center items-center p-8 text-white font-river-adventurer overflow-x-hidden">
       {page === 'START' && <StartPage setPage={setPage} />}
       {page === 'INITIALIZE' && (
         <InitializeGridPage
@@ -26,9 +27,8 @@ function App() {
         />
       )}
       {page === 'GAME' && <GamePage gameData={initialGameData} />}
-      <section className="section w-auto p-2 rounded-full absolute bottom-4 left-4">
-        <button>How To Play</button>
-      </section>
+
+      <HowToPlayBtn />
     </main>
   );
 }
