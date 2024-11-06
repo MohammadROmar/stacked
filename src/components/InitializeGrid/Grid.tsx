@@ -1,10 +1,11 @@
+import type { Dispatch, SetStateAction } from 'react';
 import { motion } from 'framer-motion';
 
+import { cellsImages } from '../../assets/images/colors';
 import { getImageName } from '../../utils/get-image-name';
-import type { Game, Symbol } from '../../types/game';
-import type { Dispatch, SetStateAction } from 'react';
 import { gameCellVariants } from '../../animation/variants/game-cell';
 import { staggeredListAnimation } from '../../animation/staggered-list';
+import type { Game, Symbol } from '../../types/game';
 
 type InitGridProps = {
   gameData: Game;
@@ -27,13 +28,11 @@ export default function Grid({
       style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
     >
       {...grid.map((rows, i) =>
-        rows.map((item, j) => {
-          const imageName = getImageName(item);
-
+        rows.map((symbol, j) => {
           return (
             <motion.li
               variants={gameCellVariants}
-              key={`${i} ${j} ${item}`}
+              key={`${i} ${j} ${symbol}`}
               onClick={() => {
                 const newGrid = [...grid];
                 newGrid[i][j] = selectedColor;
@@ -42,7 +41,7 @@ export default function Grid({
               }}
             >
               <img
-                src={`/src/assets/images/colors/${imageName}.png`}
+                src={cellsImages[getImageName(symbol)]}
                 className="w-full aspect-square object-cover object-center"
               />
             </motion.li>

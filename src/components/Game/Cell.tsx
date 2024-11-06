@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import img from '../../assets/images/colors/blue.png';
 
 import { getImageName } from '../../utils/get-image-name';
 import { gameCellVariants } from '../../animation/variants/game-cell';
@@ -11,8 +10,6 @@ type CellProps = {
 };
 
 export default function Cell({ item }: CellProps) {
-  console.log(img);
-
   const imageName = getImageName(item);
 
   return (
