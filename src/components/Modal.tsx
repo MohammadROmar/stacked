@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 
 type ModalProps = {
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export default function Modal({ children }: ModalProps) {

@@ -103,4 +103,11 @@ export class GameUtils {
 
     console.log(gridAsString);
   }
+
+  setNewGrid(grid: GameGrid) {
+    this.grid = grid;
+
+    this.colorCellsCount = { ...initialCellsCount };
+    this.calcColorCells();
+  }
 }

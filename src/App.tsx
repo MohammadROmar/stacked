@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import StartPage from './pages/Start';
 import InitializeGridPage from './pages/InitializeGrid';
@@ -16,6 +16,15 @@ function App() {
     grid: generateInitialGrid(4, 4),
   });
 
+  useEffect(() => {
+    if (page === 'INITIALIZE') {
+      setInitialGameData((oldGrid) => ({
+        ...oldGrid,
+        grid: generateInitialGrid(4, 4),
+      }));
+    }
+  }, [page]);
+
   return (
     <main className="min-h-screen bg-[url(./assets/images/background.jpg)] bg-center bg-cover bg-no-repeat bg-clip-border flex justify-center items-center p-8 text-white font-river-adventurer overflow-x-hidden">
       {page === 'START' && <StartPage setPage={setPage} />}
@@ -26,7 +35,9 @@ function App() {
           setPage={setPage}
         />
       )}
-      {page === 'GAME' && <GamePage gameData={initialGameData} />}
+      {page === 'GAME' && (
+        <GamePage gameData={initialGameData} setPage={setPage} />
+      )}
 
       <HowToPlayBtn />
     </main>
