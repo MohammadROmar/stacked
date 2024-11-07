@@ -39,7 +39,7 @@ export default function HowToPlayBtn() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1, transition: { delay: 0.25 } }}
                   exit={{ opacity: 0 }}
-                  className="whitespace-nowrap"
+                  className="whitespace-nowrap mr-2"
                 >
                   How To Play
                 </motion.p>

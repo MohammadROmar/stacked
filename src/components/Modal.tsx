@@ -19,7 +19,7 @@ export default function Modal({ children }: ModalProps) {
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.5 }}
-        className="p-4 rounded-lg font-river-adventurer text-white bg-[#176ac3]/80 w-[85%] max-w-lg flex flex-col justify-center items-center absolute z-20"
+        className="p-4 rounded-lg font-river-adventurer text-white bg-[#176ac3]/80 w-[85%] max-w-lg flex flex-col justify-center items-center fixed z-20"
         style={{ x: '-50%', y: '-50%', top: '50%', left: '50%' }}
       >
         {children}

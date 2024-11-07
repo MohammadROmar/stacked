@@ -1,6 +1,6 @@
 import { Game } from './game/game';
-import type { GameGrid } from '../types/game';
 import { controlKeys } from '../data/contol-keys';
+import type { GameGrid } from '../types/game';
 
 export class Controls {
   public game: Game;
@@ -89,7 +89,7 @@ export class Controls {
   };
 
   updateGameState() {
-    this.updateGrid([...this.game.grid]);
+    this.updateGrid(this.game.copyCurrentState().grid);
 
     if (this.game.didWin()) {
       this.removeControls();

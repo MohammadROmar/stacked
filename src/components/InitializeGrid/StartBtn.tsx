@@ -21,7 +21,8 @@ export default function StartBtn({ gameData, setPage }: StartBtnProps) {
       setError('Grid must have rows and columns.');
     } else if (isEmptyGrid(gameData)) {
       setError('Grid must contain colors.');
-    } else {
+    } // TODO: Check color cells number.
+    else {
       setPage('GAME');
     }
   }
@@ -31,7 +32,7 @@ export default function StartBtn({ gameData, setPage }: StartBtnProps) {
       <AnimatePresence>
         {error && (
           <Modal>
-            <h2 className="mb-4 text-red-400 text-2xl">Error!</h2>
+            <h2 className="mb-2 text-red-400 text-2xl">Oops!</h2>
             <p className="mb-2">{error}</p>
             <button
               onClick={() => setError(null)}

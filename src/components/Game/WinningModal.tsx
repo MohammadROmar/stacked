@@ -10,7 +10,7 @@ export default function WinningModal({
     <Modal>
       <h2 className="text-2xl mb-2">You Won!</h2>
       <button onClick={() => setPage('START')} className="button">
-        Restart The Game
+        Back to start
       </button>
     </Modal>
   );
