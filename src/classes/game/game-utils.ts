@@ -5,12 +5,13 @@ export class GameUtils {
   public rows: number;
   public cols: number;
   public grid: GameGrid;
-  public colorCellsCount = { ...initialCellsCount };
+  protected colorCellsCount;
 
   constructor(rows: number, cols: number, grid: GameGrid) {
     this.grid = grid;
     this.rows = rows;
     this.cols = cols;
+    this.colorCellsCount = { ...initialCellsCount };
   }
 
   calcColorCells() {
@@ -100,7 +101,6 @@ export class GameUtils {
 
       gridAsString += '\n\n';
     }
-
     console.log(gridAsString);
   }
 

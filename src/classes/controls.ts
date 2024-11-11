@@ -1,13 +1,14 @@
 import { Game } from './game/game';
 import { controlKeys } from '../data/contol-keys';
 import type { GameGrid } from '../types/game';
+import { GameSolver } from './game-solver';
 
 export class Controls {
   public game: Game;
   public updateGrid: (grid: GameGrid) => void;
   public didWin: (didWin: boolean) => void;
-  private startX: number = 0;
-  private startY: number = 0;
+  private startX: number;
+  private startY: number;
 
   constructor(
     game: Game,
@@ -17,6 +18,10 @@ export class Controls {
     this.game = game;
     this.updateGrid = updateGrid;
     this.didWin = didWin;
+    this.startX = 0;
+    this.startY = 0;
+
+    new GameSolver(this.game, this.updateGrid, this.didWin);
 
     this.setupControls();
   }
