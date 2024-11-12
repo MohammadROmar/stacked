@@ -8,27 +8,30 @@ export class GameSolver {
 
   private updateGrid: (grid: GameGrid) => void;
   private didWin: (didWin: boolean) => void;
+  private solveAlgorithm: 'BFS' | 'DFS';
 
   private visited: GameGrid[];
   private allStates: { from: Game | undefined; game: Game }[];
 
   constructor(
     game: Game,
+    solveAlgorithm: 'BFS' | 'DFS',
     updateGrid: (grid: GameGrid) => void,
     didWin: (didWin: boolean) => void
   ) {
     this.game = game;
+    this.solveAlgorithm = solveAlgorithm;
     this.updateGrid = updateGrid;
     this.didWin = didWin;
 
     this.visited = [];
     this.allStates = [];
 
-    // console.log('BFS');
-    // this.solveBFS();
-    // console.log('---------------------------------------------------------');
-    // console.log('DFS');
-    // this.solveDFS();
+    if (this.solveAlgorithm === 'BFS') {
+      this.solveBFS();
+    } else {
+      this.solveDFS();
+    }
   }
 
   solveBFS() {
@@ -52,11 +55,7 @@ export class GameSolver {
 
           if (state.didWin()) {
             const path = this.getPath(state);
-            console.log(path.length);
-
-            for (const state of path) {
-              state.printGrid();
-            }
+            this.updateUI(path);
 
             return;
           }
@@ -66,6 +65,10 @@ export class GameSolver {
         }
       }
     }
+
+    // If we iterate through every possible state and we reached here
+    // it means the game could not be solved.
+    throw new Error('Could not find a solution');
   }
 
   solveDFS() {
@@ -89,11 +92,7 @@ export class GameSolver {
 
           if (state.didWin()) {
             const path = this.getPath(state);
-            console.log(path.length);
-
-            for (const state of path) {
-              state.printGrid();
-            }
+            this.updateUI(path);
 
             return;
           }
@@ -103,6 +102,8 @@ export class GameSolver {
         }
       }
     }
+
+    throw new Error('Could not find a solution');
   }
 
   isVisited(game: Game) {
@@ -131,14 +132,16 @@ export class GameSolver {
     return path.reverse();
   }
 
-  async updateUI() {
-    for (const state of this.allStates) {
-      this.updateGrid(state.game.copyCurrentState().grid);
+  async updateUI(path: Game[]) {
+    for (const state of path) {
+      this.updateGrid(state.copyCurrentState().grid);
+      if (state.didWin()) {
+        this.didWin(true);
+        return;
+      }
 
       // Add a delay
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-
-    this.didWin(true);
   }
 }

@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
+import ErrorModal from '../ErrorModal';
+import { isEmptyGrid } from '../../utils/is-empty-grid';
 import type { Game } from '../../types/game';
 import type { Page } from '../../types/page';
-import Modal from '../Modal';
-import { isEmptyGrid } from '../../utils/is-empty-grid';
-import { AnimatePresence } from 'framer-motion';
 
 type StartBtnProps = {
   gameData: Game;
@@ -12,7 +12,7 @@ type StartBtnProps = {
 };
 
 export default function StartBtn({ gameData, setPage }: StartBtnProps) {
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string>();
 
   const { rows, cols } = gameData;
 
@@ -31,16 +31,7 @@ export default function StartBtn({ gameData, setPage }: StartBtnProps) {
     <>
       <AnimatePresence>
         {error && (
-          <Modal>
-            <h2 className="mb-2 text-red-400 text-2xl">Oops!</h2>
-            <p className="mb-2">{error}</p>
-            <button
-              onClick={() => setError(null)}
-              className="button animate-none self-end"
-            >
-              Close
-            </button>
-          </Modal>
+          <ErrorModal error={error} onClose={() => setError(undefined)} />
         )}
       </AnimatePresence>
 

@@ -7,9 +7,12 @@ import SelectedColor from '../components/InitializeGrid/SelectedColor';
 import StartBtn from '../components/InitializeGrid/StartBtn';
 import type { InitializeGridPageProps } from '../types/game-initializer';
 import type { Symbol } from '../types/game';
+import GameMode from '../components/InitializeGrid/GameMode';
 
 export default function InitializeGridPage({
   gameData,
+  gameMode,
+  setGameMode,
   setPage,
   changeGameData,
 }: InitializeGridPageProps) {
@@ -27,6 +30,8 @@ export default function InitializeGridPage({
           selectedColor={selectedColor}
           changeGameData={changeGameData}
         />
+
+        <GameMode gameMode={gameMode} setGameMode={setGameMode} />
 
         <StartBtn gameData={gameData} setPage={setPage} />
       </section>

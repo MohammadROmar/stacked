@@ -7,6 +7,7 @@ import HowToPlayBtn from './components/HowToPlayBtn';
 import { generateInitialGrid } from './utils/generate-initial-grid';
 import type { Page } from './types/page';
 import type { Game } from './types/game';
+import type { GameMode } from './types/game-mode';
 
 function App() {
   const [page, setPage] = useState<Page>('START');
@@ -15,6 +16,7 @@ function App() {
     cols: 4,
     grid: generateInitialGrid(4, 4),
   });
+  const [gameMode, setGameMode] = useState<GameMode>('BFS');
 
   useEffect(() => {
     if (page === 'INITIALIZE') {
@@ -32,11 +34,17 @@ function App() {
         <InitializeGridPage
           gameData={initialGameData}
           changeGameData={setInitialGameData}
+          gameMode={gameMode}
+          setGameMode={setGameMode}
           setPage={setPage}
         />
       )}
       {page === 'GAME' && (
-        <GamePage gameData={initialGameData} setPage={setPage} />
+        <GamePage
+          gameData={initialGameData}
+          solveMethod={gameMode}
+          setPage={setPage}
+        />
       )}
 
       <HowToPlayBtn />

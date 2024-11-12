@@ -1,7 +1,6 @@
 import { Game } from './game/game';
 import { controlKeys } from '../data/contol-keys';
 import type { GameGrid } from '../types/game';
-import { GameSolver } from './game-solver';
 
 export class Controls {
   public game: Game;
@@ -20,8 +19,6 @@ export class Controls {
     this.didWin = didWin;
     this.startX = 0;
     this.startY = 0;
-
-    new GameSolver(this.game, this.updateGrid, this.didWin);
 
     this.setupControls();
   }
