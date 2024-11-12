@@ -1,17 +1,16 @@
 import { Game } from './game/game';
 import { Queue } from './data-structure/queue';
 import type { GameGrid } from '../types/game';
+import { Stack } from './data-structure/stack';
 
 export class GameSolver {
   private game: Game;
-  private rowsNum: number;
-  private colsNum: number;
 
   private updateGrid: (grid: GameGrid) => void;
   private didWin: (didWin: boolean) => void;
 
   private visited: GameGrid[];
-  private allStates: { from: Game | undefined; game: Game }[] = [];
+  private allStates: { from: Game | undefined; game: Game }[];
 
   constructor(
     game: Game,
@@ -23,13 +22,19 @@ export class GameSolver {
     this.didWin = didWin;
 
     this.visited = [];
-    this.rowsNum = this.game.grid.length;
-    this.colsNum = this.game.grid[0].length;
+    this.allStates = [];
 
-    this.solveBFS();
+    // console.log('BFS');
+    // this.solveBFS();
+    // console.log('---------------------------------------------------------');
+    // console.log('DFS');
+    // this.solveDFS();
   }
 
   solveBFS() {
+    this.visited = [];
+    this.allStates = [];
+
     const queue = new Queue<Game>();
 
     queue.enqueue(this.game);
@@ -47,7 +52,11 @@ export class GameSolver {
 
           if (state.didWin()) {
             const path = this.getPath(state);
-            console.log(path);
+            console.log(path.length);
+
+            for (const state of path) {
+              state.printGrid();
+            }
 
             return;
           }
@@ -59,7 +68,42 @@ export class GameSolver {
     }
   }
 
-  solveDFS() {}
+  solveDFS() {
+    this.visited = [];
+    this.allStates = [];
+
+    const stack = new Stack<Game>();
+
+    stack.push(this.game);
+    this.visited.push(this.game.grid);
+    this.allStates.push({ from: undefined, game: this.game });
+
+    while (!stack.isEmpty()) {
+      const currentState = stack.pop();
+
+      const movementStates = this.game.getPossibleStates(currentState!);
+
+      for (const state of movementStates) {
+        if (!this.isVisited(state)) {
+          this.allStates.push({ from: currentState, game: state });
+
+          if (state.didWin()) {
+            const path = this.getPath(state);
+            console.log(path.length);
+
+            for (const state of path) {
+              state.printGrid();
+            }
+
+            return;
+          }
+
+          stack.push(state);
+          this.visited.push(state.grid);
+        }
+      }
+    }
+  }
 
   isVisited(game: Game) {
     for (const visitedState of this.visited) {
@@ -85,5 +129,16 @@ export class GameSolver {
     }
 
     return path.reverse();
+  }
+
+  async updateUI() {
+    for (const state of this.allStates) {
+      this.updateGrid(state.game.copyCurrentState().grid);
+
+      // Add a delay
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+
+    this.didWin(true);
   }
 }

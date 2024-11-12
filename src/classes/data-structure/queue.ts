@@ -13,14 +13,6 @@ export class Queue<T> {
     return this.items.shift();
   }
 
-  peek() {
-    return this.items[0];
-  }
-
-  size() {
-    return this.items.length;
-  }
-
   isEmpty() {
     return this.items.length === 0;
   }

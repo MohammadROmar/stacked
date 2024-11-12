@@ -13,11 +13,7 @@ export class Stack<T> {
     return this.items.pop();
   }
 
-  peek() {
-    return this.items[this.items.length - 1];
-  }
-
-  size() {
-    return this.items.length;
+  isEmpty() {
+    return this.items.length === 0;
   }
 }
