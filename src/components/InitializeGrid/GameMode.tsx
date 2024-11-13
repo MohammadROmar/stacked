@@ -9,7 +9,7 @@ export default function GameMode() {
   return (
     <>
       <h2>Mode:</h2>
-      <ul className="flex items-center flex-wrap gap-2">
+      <ul className="flex justify-center items-center flex-wrap gap-2">
         {GAME_MODS.map(({ gameMode: mode, description }) => (
           <li key={mode}>
             <button
