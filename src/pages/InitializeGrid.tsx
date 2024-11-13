@@ -2,38 +2,30 @@ import { useState } from 'react';
 
 import Title from '../components/Title';
 import GameInitializer from '../components/InitializeGrid/GameInitializer';
+import GameMode from '../components/InitializeGrid/GameMode';
 import ColorSelectorBtn from '../components/InitializeGrid/ColorSelectorBtn';
 import SelectedColor from '../components/InitializeGrid/SelectedColor';
 import StartBtn from '../components/InitializeGrid/StartBtn';
-import type { InitializeGridPageProps } from '../types/game-initializer';
 import type { Symbol } from '../types/game';
-import GameMode from '../components/InitializeGrid/GameMode';
+import ResetBtn from '../components/InitializeGrid/Reset';
 
-export default function InitializeGridPage({
-  gameData,
-  gameMode,
-  setGameMode,
-  setPage,
-  changeGameData,
-}: InitializeGridPageProps) {
+export default function InitializeGridPage() {
   const [selectedColor, setSelectedColor] = useState<Symbol>('.');
 
   return (
     <>
       <SelectedColor selectedColor={selectedColor} />
 
+      <ResetBtn />
+
       <section className="section m-auto flex flex-col items-center justify-center">
         <Title />
 
-        <GameInitializer
-          gameData={gameData}
-          selectedColor={selectedColor}
-          changeGameData={changeGameData}
-        />
+        <GameInitializer selectedColor={selectedColor} />
 
-        <GameMode gameMode={gameMode} setGameMode={setGameMode} />
+        <GameMode />
 
-        <StartBtn gameData={gameData} setPage={setPage} />
+        <StartBtn />
       </section>
 
       <ColorSelectorBtn setSelectedColor={setSelectedColor} />

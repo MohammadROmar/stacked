@@ -68,7 +68,7 @@ export class GameSolver {
 
     // If we iterate through every possible state and we reached here
     // it means the game could not be solved.
-    throw new Error('Could not find a solution');
+    throw new Error('Could not find a solution for the given grid.');
   }
 
   solveDFS() {

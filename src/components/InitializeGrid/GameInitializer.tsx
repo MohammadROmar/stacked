@@ -1,14 +1,15 @@
+import { useGameDispatch, useGameSelector } from '../../store/hooks';
 import Grid from './Grid';
 import Input from './Input';
 import { generateInitialGrid } from '../../utils/generate-initial-grid';
 import type { GameInitializerProps } from '../../types/game-initializer';
+import { setInitialGame } from '../../store/slices/initial-game';
 
 export default function GameInitializer({
-  gameData,
   selectedColor,
-  changeGameData,
 }: GameInitializerProps) {
-  const { rows, cols } = gameData;
+  const dispatch = useGameDispatch();
+  const gameData = useGameSelector((state) => state.initialGame.data);
 
   return (
     <>
@@ -17,13 +18,15 @@ export default function GameInitializer({
       <div className="flex items-center justify-center gap-1 mb-2">
         <Input
           id="rows"
-          value={rows.toString()}
+          value={gameData.rows.toString()}
           onChange={(newValue) =>
-            changeGameData((oldData) => ({
-              ...oldData,
-              grid: generateInitialGrid(newValue, oldData.cols),
-              rows: newValue,
-            }))
+            dispatch(
+              setInitialGame({
+                ...gameData,
+                grid: generateInitialGrid(newValue, gameData.cols),
+                rows: newValue,
+              })
+            )
           }
         />
 
@@ -31,22 +34,20 @@ export default function GameInitializer({
 
         <Input
           id="columns"
-          value={cols.toString()}
+          value={gameData.cols.toString()}
           onChange={(newValue) =>
-            changeGameData((oldData) => ({
-              ...oldData,
-              grid: generateInitialGrid(oldData.rows, newValue),
-              cols: newValue,
-            }))
+            dispatch(
+              setInitialGame({
+                ...gameData,
+                grid: generateInitialGrid(gameData.rows, newValue),
+                cols: newValue,
+              })
+            )
           }
         />
       </div>
 
-      <Grid
-        gameData={gameData}
-        changeGameData={changeGameData}
-        selectedColor={selectedColor!}
-      />
+      <Grid selectedColor={selectedColor!} />
     </>
   );
 }

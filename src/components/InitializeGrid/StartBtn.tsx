@@ -1,29 +1,25 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
+import { useGameDispatch, useGameSelector } from '../../store/hooks';
 import ErrorModal from '../ErrorModal';
+import { setPage } from '../../store/slices/page';
 import { isEmptyGrid } from '../../utils/is-empty-grid';
-import type { Game } from '../../types/game';
-import type { Page } from '../../types/page';
 
-type StartBtnProps = {
-  gameData: Game;
-  setPage(newPage: Page): void;
-};
+export default function StartBtn() {
+  const dispatch = useGameDispatch();
+  const initialGameData = useGameSelector((state) => state.initialGame.data);
 
-export default function StartBtn({ gameData, setPage }: StartBtnProps) {
   const [error, setError] = useState<string>();
 
-  const { rows, cols } = gameData;
-
   function handleGridSubmit() {
-    if (rows <= 0 || cols <= 0) {
+    if (initialGameData.rows <= 0 || initialGameData.cols <= 0) {
       setError('Grid must have rows and columns.');
-    } else if (isEmptyGrid(gameData)) {
+    } else if (isEmptyGrid(initialGameData)) {
       setError('Grid must contain colors.');
     } // TODO: Check color cells number.
     else {
-      setPage('GAME');
+      dispatch(setPage('GAME'));
     }
   }
 

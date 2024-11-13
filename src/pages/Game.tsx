@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
+import { useGameSelector } from '../store/hooks';
 import Title from '../components/Title';
 import Restart from '../components/Game/Restart';
 import GameGrid from '../components/Game/Grid';
@@ -10,22 +11,14 @@ import { Game } from '../classes/game/game';
 import { Controls } from '../classes/controls';
 import { GameSolver } from '../classes/game-solver';
 import { copyGrid } from '../utils/copy-grid';
-import type { Game as tGame } from '../types/game';
-import type { Page } from '../types/page';
-import type { GameMode } from '../types/game-mode';
 
-type GamePageProps = {
-  gameData: tGame;
-  solveMethod: GameMode;
-  setPage(newPae: Page): void;
-};
-
-export default function GamePage({
-  solveMethod,
-  gameData,
-  setPage,
-}: GamePageProps) {
-  const { rows, cols, grid: initialGrid } = gameData;
+export default function GamePage() {
+  const {
+    rows,
+    cols,
+    grid: initialGrid,
+  } = useGameSelector((state) => state.initialGame.data);
+  const solveMethod = useGameSelector((state) => state.mode.data);
 
   const [grid, setGrid] = useState(copyGrid(initialGrid));
   const [didWin, setDidWin] = useState(false);
@@ -38,11 +31,12 @@ export default function GamePage({
     } else {
       try {
         new GameSolver(game, solveMethod, setGrid, setDidWin);
-      } catch (_) {
-        setError('Could not find a solution for the given grid.');
+      } catch (e) {
+        const error = e as Error;
+        setError(error.message);
       }
     }
-  }, []);
+  }, [game, solveMethod]);
 
   function handleRestart() {
     const copiedGrid = copyGrid(initialGrid);
@@ -54,8 +48,8 @@ export default function GamePage({
   return (
     <>
       <AnimatePresence>
-        {error && <ErrorModal error={error} onClose={() => setPage('START')} />}
-        {didWin && <WinningModal setPage={setPage} />}
+        {error && <ErrorModal error={error} />}
+        {didWin && <WinningModal />}
       </AnimatePresence>
 
       {!didWin && solveMethod === 'USER' && (

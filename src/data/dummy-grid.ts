@@ -1,6 +1,6 @@
 import type { GameGrid } from '../types/game';
 
-export const dummtGrid: GameGrid = [
+export const dummyGrid: GameGrid = [
   ['blue', '.', '#', 'blue'],
   ['red', '.', '.', 'red'],
   ['.', '.', '.', '.'],

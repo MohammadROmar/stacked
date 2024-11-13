@@ -1,15 +1,17 @@
+import { useGameDispatch } from '../store/hooks';
 import Title from '../components/Title';
-import type { Page } from '../types/page';
+import { setPage } from '../store/slices/page';
 
-type StartPageProps = {
-  setPage(page: Page): void;
-};
+export default function StartPage() {
+  const dispatch = useGameDispatch();
 
-export default function StartPage({ setPage }: StartPageProps) {
   return (
     <section className="section m-auto flex flex-col items-center justify-center">
       <Title />
-      <button onClick={() => setPage('INITIALIZE')} className="button">
+      <button
+        onClick={() => dispatch(setPage('INITIALIZE'))}
+        className="button"
+      >
         Start Playing!
       </button>
     </section>

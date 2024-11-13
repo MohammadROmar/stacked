@@ -1,23 +1,21 @@
-import type { Dispatch, SetStateAction } from 'react';
 import { motion } from 'framer-motion';
 
+import { useGameDispatch, useGameSelector } from '../../store/hooks';
 import { cellsImages } from '../../assets/images/colors';
 import { getImageName } from '../../utils/get-image-name';
 import { gameCellVariants } from '../../animation/variants/game-cell';
 import { staggeredListAnimation } from '../../animation/staggered-list';
-import type { Game, Symbol } from '../../types/game';
+import { setInitialGame } from '../../store/slices/initial-game';
+import type { Symbol } from '../../types/game';
+import { copyGrid } from '../../utils/copy-grid';
 
 type InitGridProps = {
-  gameData: Game;
-  changeGameData: Dispatch<SetStateAction<Game>>;
   selectedColor: Symbol;
 };
 
-export default function Grid({
-  gameData,
-  changeGameData,
-  selectedColor,
-}: InitGridProps) {
+export default function Grid({ selectedColor }: InitGridProps) {
+  const dispatch = useGameDispatch();
+  const gameData = useGameSelector((state) => state.initialGame.data);
   const { rows, cols, grid } = gameData;
 
   return (
@@ -34,10 +32,10 @@ export default function Grid({
               variants={gameCellVariants}
               key={`${i} ${j} ${symbol}`}
               onClick={() => {
-                const newGrid = [...grid];
+                const newGrid = copyGrid(grid);
                 newGrid[i][j] = selectedColor;
 
-                changeGameData((oldData) => ({ ...oldData, grid: newGrid }));
+                dispatch(setInitialGame({ ...gameData, grid: newGrid }));
               }}
             >
               <img

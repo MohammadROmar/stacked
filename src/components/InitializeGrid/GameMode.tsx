@@ -1,12 +1,11 @@
 import { GAME_MODS } from '../../data/game-modes';
-import type { GameMode as tGameMode } from '../../types/game-mode';
+import { useGameDispatch, useGameSelector } from '../../store/hooks';
+import { setMode } from '../../store/slices/mode';
 
-type GameModeProps = {
-  gameMode: tGameMode;
-  setGameMode: (newMode: tGameMode) => void;
-};
+export default function GameMode() {
+  const dispatch = useGameDispatch();
+  const gameMode = useGameSelector((state) => state.mode.data);
 
-export default function GameMode({ gameMode, setGameMode }: GameModeProps) {
   return (
     <>
       <h2>Mode:</h2>
@@ -17,7 +16,7 @@ export default function GameMode({ gameMode, setGameMode }: GameModeProps) {
               className={`button animate-none transition-all duration-300 ${
                 gameMode === mode ? 'bg-white text-black/70' : 'hover:scale-105'
               }`}
-              onClick={() => setGameMode(mode)}
+              onClick={() => dispatch(setMode(mode))}
             >
               {description}
             </button>
