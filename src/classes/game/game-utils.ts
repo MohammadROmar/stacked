@@ -1,13 +1,13 @@
 import { initialCellsCount } from '../../data/initial-color-cells-count';
-import type { GameGrid, MovementDirection } from '../../types/game';
+import type { Grid, MovementDirection } from '../../types/game';
 
 export class GameUtils {
   public rows: number;
   public cols: number;
-  public grid: GameGrid;
+  public grid: Grid;
   protected colorCellsCount;
 
-  constructor(rows: number, cols: number, grid: GameGrid) {
+  constructor(rows: number, cols: number, grid: Grid) {
     this.grid = grid;
     this.rows = rows;
     this.cols = cols;
@@ -104,7 +104,7 @@ export class GameUtils {
     console.log(gridAsString);
   }
 
-  setNewGrid(grid: GameGrid) {
+  setNewGrid(grid: Grid) {
     this.grid = grid;
 
     this.colorCellsCount = { ...initialCellsCount };

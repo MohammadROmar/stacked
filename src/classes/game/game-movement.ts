@@ -1,8 +1,8 @@
 import { GameUtils } from './game-utils';
-import type { GameGrid } from '../../types/game';
+import type { Grid } from '../../types/game';
 
 export class GameMovement extends GameUtils {
-  constructor(rows: number, cols: number, grid: GameGrid) {
+  constructor(rows: number, cols: number, grid: Grid) {
     super(rows, cols, grid);
   }
 

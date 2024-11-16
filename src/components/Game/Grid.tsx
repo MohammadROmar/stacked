@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 
 import { staggeredListAnimation } from '../../animation/staggered-list';
-import type { GameGrid as tGameGrid } from '../../types/game';
+import type { Grid } from '../../types/game';
 import Cell from './Cell';
 
 type GameGridProps = {
   cols: number;
-  grid: tGameGrid;
+  grid: Grid;
 };
 
 export default function GameGrid({ cols, grid }: GameGridProps) {

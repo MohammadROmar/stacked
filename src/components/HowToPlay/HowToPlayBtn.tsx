@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import InfoIcon from '../assets/icons/Info';
+import InfoIcon from '../../assets/icons/Info';
 import HowToPlayModal from './HowToPlayModal';
 
 export default function HowToPlayBtn() {
@@ -24,9 +24,14 @@ export default function HowToPlayBtn() {
         {modalIsOpen && <HowToPlayModal setIsOpen={setModalIsOpen} />}
       </AnimatePresence>
 
-      <section className="section w-auto p-2 rounded-full absolute bottom-4 left-4">
-        <button onClick={() => setModalIsOpen(true)} className="flex gap-1">
-          <InfoIcon />
+      <section className="section w-auto p-0 rounded-full absolute bottom-4 left-4">
+        <button
+          onClick={() => setModalIsOpen(true)}
+          className="flex justify-center gap-1"
+        >
+          <div className="p-2">
+            <InfoIcon />
+          </div>
 
           <AnimatePresence>
             {isVisible && (
@@ -39,7 +44,7 @@ export default function HowToPlayBtn() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1, transition: { delay: 0.25 } }}
                   exit={{ opacity: 0 }}
-                  className="whitespace-nowrap mr-2"
+                  className="whitespace-nowrap mr-4 py-2"
                 >
                   How To Play
                 </motion.p>

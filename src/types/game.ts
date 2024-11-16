@@ -11,12 +11,14 @@ export type Symbol =
   | 'purple'
   | 'yellow';
 
-export type GameGrid = Symbol[][];
+export type Grid = Symbol[][];
 
 export type MovementDirection = 'UP' | 'RIGHT' | 'DOWN' | 'LEFT';
 
 export type Game = {
   rows: number;
   cols: number;
-  grid: GameGrid;
+  grid: Grid;
 };
+
+export type GameGrid = { moves: number; cells: Grid };

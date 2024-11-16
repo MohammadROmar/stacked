@@ -1,17 +1,20 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 import { Game } from './game/game';
 import { controlKeys } from '../data/contol-keys';
-import type { GameGrid } from '../types/game';
+import type { GameGrid, MovementDirection } from '../types/game';
 
 export class Controls {
   public game: Game;
-  public updateGrid: (grid: GameGrid) => void;
+  public updateGrid: Dispatch<SetStateAction<GameGrid>>;
   public didWin: (didWin: boolean) => void;
   private startX: number;
   private startY: number;
+  private prevMovementDir: MovementDirection | null;
 
   constructor(
     game: Game,
-    updateGrid: (grid: GameGrid) => void,
+    updateGrid: Dispatch<SetStateAction<GameGrid>>,
     didWin: (didWin: boolean) => void
   ) {
     this.game = game;
@@ -19,8 +22,7 @@ export class Controls {
     this.didWin = didWin;
     this.startX = 0;
     this.startY = 0;
-
-    this.setupControls();
+    this.prevMovementDir = null;
   }
 
   setupControls() {
@@ -77,26 +79,54 @@ export class Controls {
       return;
     }
 
-    if (key === 'ArrowUp' || key === 'w' || key === 'W') {
+    const direction = this.getDirection(key);
+    const isNewMove = !(direction === this.prevMovementDir);
+
+    if (direction === 'UP' && isNewMove) {
       this.game.moveUp();
-    } else if (key === 'ArrowRight' || key === 'd' || key === 'D') {
+      this.prevMovementDir = 'UP';
+    } else if (direction === 'RIGHT' && isNewMove) {
       this.game.moveRight();
-    } else if (key === 'ArrowDown' || key === 's' || key === 'S') {
+      this.prevMovementDir = 'RIGHT';
+    } else if (direction === 'DOWN' && isNewMove) {
       this.game.moveDown();
-    } else if (key === 'ArrowLeft' || key === 'a' || key === 'A') {
+      this.prevMovementDir = 'DOWN';
+    } else if (direction === 'LEFT' && isNewMove) {
       this.game.moveLeft();
+      this.prevMovementDir = 'LEFT';
     }
 
-    this.updateGameState();
+    if (isNewMove) {
+      this.updateGameState();
+    }
   };
 
   updateGameState() {
-    this.updateGrid(this.game.copyCurrentState().grid);
+    this.updateGrid(({ moves }) => ({
+      moves: moves + 1,
+      cells: this.game.copyCurrentState().grid,
+    }));
 
     if (this.game.didWin()) {
       this.removeControls();
       this.didWin(true);
     }
+  }
+
+  getDirection(key: string): MovementDirection {
+    if (key === 'ArrowUp' || key === 'w' || key === 'W') {
+      return 'UP';
+    } else if (key === 'ArrowRight' || key === 'd' || key === 'D') {
+      return 'RIGHT';
+    } else if (key === 'ArrowDown' || key === 's' || key === 'S') {
+      return 'DOWN';
+    } else {
+      return 'LEFT';
+    }
+  }
+
+  resetControls() {
+    this.prevMovementDir = null;
   }
 
   removeControls() {

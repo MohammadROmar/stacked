@@ -1,8 +1,8 @@
 import { GameMovement } from './game-movement';
-import type { GameGrid } from '../../types/game';
+import type { Grid } from '../../types/game';
 
 export class Game extends GameMovement {
-  constructor(rows: number, cols: number, grid: GameGrid) {
+  constructor(rows: number, cols: number, grid: Grid) {
     super(rows, cols, grid);
 
     this.calcColorCells();
@@ -25,7 +25,7 @@ export class Game extends GameMovement {
   }
 
   copyCurrentState() {
-    const newGrid: GameGrid = [];
+    const newGrid: Grid = [];
 
     for (let i = 0; i < this.rows; i++) {
       newGrid.push([]);
@@ -40,7 +40,7 @@ export class Game extends GameMovement {
     return copiedGame;
   }
 
-  checkGridEquality(firstGrid: GameGrid, secondGrid: GameGrid) {
+  checkGridEquality(firstGrid: Grid, secondGrid: Grid) {
     if (
       firstGrid.length !== secondGrid.length ||
       firstGrid[0].length !== secondGrid[0].length

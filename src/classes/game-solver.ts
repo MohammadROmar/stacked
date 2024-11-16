@@ -1,22 +1,24 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 import { Game } from './game/game';
 import { Queue } from './data-structure/queue';
-import type { GameGrid } from '../types/game';
+import type { GameGrid, Grid } from '../types/game';
 import { Stack } from './data-structure/stack';
 
 export class GameSolver {
   private game: Game;
 
-  private updateGrid: (grid: GameGrid) => void;
+  private updateGrid: Dispatch<SetStateAction<GameGrid>>;
   private didWin: (didWin: boolean) => void;
-  private solveAlgorithm: 'BFS' | 'DFS';
+  private solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS';
 
-  private visited: GameGrid[];
+  private visited: Grid[];
   private allStates: { from: Game | undefined; game: Game }[];
 
   constructor(
     game: Game,
-    solveAlgorithm: 'BFS' | 'DFS',
-    updateGrid: (grid: GameGrid) => void,
+    solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS',
+    updateGrid: Dispatch<SetStateAction<GameGrid>>,
     didWin: (didWin: boolean) => void
   ) {
     this.game = game;
@@ -29,8 +31,14 @@ export class GameSolver {
 
     if (this.solveAlgorithm === 'BFS') {
       this.solveBFS();
-    } else {
+    } else if (this.solveAlgorithm === 'DFS') {
       this.solveDFS();
+    } else {
+      const hasDFSSolution = this.solveDFSRec();
+
+      if (!hasDFSSolution) {
+        throw new Error('Could not find a solution for the given grid.');
+      }
     }
   }
 
@@ -106,6 +114,40 @@ export class GameSolver {
     throw new Error('Could not find a solution');
   }
 
+  solveDFSRec(givenState: Game | undefined = undefined): boolean {
+    if (givenState?.didWin()) {
+      const path = this.getPath(givenState);
+      this.updateUI(path);
+
+      return true;
+    }
+
+    const prevState = givenState;
+
+    if (!givenState) {
+      this.visited = [];
+      this.allStates = [];
+
+      givenState = this.game;
+    }
+
+    if (!this.isVisited(givenState)) {
+      this.visited.push(givenState.grid);
+
+      const movementStates = givenState.getPossibleStates(givenState);
+      for (const state of movementStates) {
+        this.allStates.push({ from: prevState, game: state });
+        const didWin = this.solveDFSRec(state);
+
+        if (didWin) {
+          return didWin;
+        }
+      }
+    }
+
+    return false;
+  }
+
   isVisited(game: Game) {
     for (const visitedState of this.visited) {
       if (game.checkGridEquality(game.grid, visitedState)) {
@@ -116,7 +158,7 @@ export class GameSolver {
     return false;
   }
 
-  getPath(winningState: Game) {
+  getPath(winningState: Game | undefined) {
     let currState: Game | undefined = winningState;
 
     const path: Game[] = [];
@@ -129,19 +171,26 @@ export class GameSolver {
       )?.from;
     }
 
-    return path.reverse();
+    return path.reverse().filter((_, i) => i !== 0);
   }
 
   async updateUI(path: Game[]) {
     for (const state of path) {
-      this.updateGrid(state.copyCurrentState().grid);
+      await this.delay();
+
+      this.updateGrid(({ moves }) => ({
+        moves: moves + 1,
+        cells: state.copyCurrentState().grid,
+      }));
+
       if (state.didWin()) {
         this.didWin(true);
         return;
       }
-
-      // Add a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
+  }
+
+  async delay() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }

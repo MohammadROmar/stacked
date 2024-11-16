@@ -1,7 +1,7 @@
-import type { GameGrid } from '../types/game';
+import type { Grid } from '../types/game';
 
-export function copyGrid(grid: GameGrid): GameGrid {
-  const copiedGrid: GameGrid = [];
+export function copyGrid(grid: Grid): Grid {
+  const copiedGrid: Grid = [];
 
   for (let i = 0; i < grid.length; i++) {
     copiedGrid.push([]);

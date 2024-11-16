@@ -14,7 +14,7 @@ export default function ColorsModal({
 }: ColorsModalProps) {
   return (
     <Modal>
-      <h2 className="text-2xl">Select color</h2>
+      <h2 className="text-2xl text-[#a2d018]">Select color</h2>
 
       <ul className="game-grid grid-cols-4 bg-transparent">
         {symbols.map((symbol) => (
