@@ -5,15 +5,15 @@ export class Queue<T> {
     this.items = [];
   }
 
-  enqueue(item: T) {
+  public enqueue(item: T) {
     this.items.push(item);
   }
 
-  dequeue() {
+  public dequeue() {
     return this.items.shift();
   }
 
-  isEmpty() {
+  public isEmpty() {
     return this.items.length === 0;
   }
 }

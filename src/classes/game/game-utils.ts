@@ -2,9 +2,9 @@ import { initialCellsCount } from '../../data/initial-color-cells-count';
 import type { Grid, MovementDirection } from '../../types/game';
 
 export class GameUtils {
-  public rows: number;
-  public cols: number;
-  public grid: Grid;
+  protected rows: number;
+  protected cols: number;
+  protected grid: Grid;
   protected colorCellsCount;
 
   constructor(rows: number, cols: number, grid: Grid) {
@@ -14,7 +14,7 @@ export class GameUtils {
     this.colorCellsCount = { ...initialCellsCount };
   }
 
-  calcColorCells() {
+  protected calcColorCells() {
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         if (this.colorCellsCount[this.grid[i][j]] !== null) {
@@ -24,7 +24,19 @@ export class GameUtils {
     }
   }
 
-  canMove(row: number, col: number, direction: MovementDirection) {
+  public getRows() {
+    return this.rows;
+  }
+
+  public getColumns() {
+    return this.cols;
+  }
+
+  public getGrid() {
+    return this.grid;
+  }
+
+  protected canMove(row: number, col: number, direction: MovementDirection) {
     switch (direction) {
       case 'UP':
         return this.inGrid(row - 1, col) && this.isEmpty(row - 1, col);
@@ -40,19 +52,23 @@ export class GameUtils {
     }
   }
 
-  inGrid(row: number, col: number) {
+  protected inGrid(row: number, col: number) {
     return row >= 0 && row < this.rows && col >= 0 && col < this.cols;
   }
 
-  isEmpty(row: number, col: number) {
+  protected isEmpty(row: number, col: number) {
     return this.grid[row][col] === '.';
   }
 
-  isObstacle(row: number, col: number) {
+  protected isObstacle(row: number, col: number) {
     return this.grid[row][col] === '#';
   }
 
-  handleColorMovement(row: number, col: number, direction: MovementDirection) {
+  protected handleColorMovement(
+    row: number,
+    col: number,
+    direction: MovementDirection
+  ) {
     switch (direction) {
       case 'UP':
         this.grid[row - 1][col] = this.grid[row][col];
@@ -76,7 +92,7 @@ export class GameUtils {
     }
   }
 
-  didWin() {
+  public didWin() {
     const colorCellsValues = Object.values(this.colorCellsCount).filter(
       (cells) => cells != null
     );
@@ -91,7 +107,7 @@ export class GameUtils {
     return finishedCells === colorCellsValues.length;
   }
 
-  printGrid() {
+  public printGrid() {
     let gridAsString = '';
 
     for (let row = 0; row < this.rows; row++) {
@@ -104,7 +120,7 @@ export class GameUtils {
     console.log(gridAsString);
   }
 
-  setNewGrid(grid: Grid) {
+  public setNewGrid(grid: Grid) {
     this.grid = grid;
 
     this.colorCellsCount = { ...initialCellsCount };

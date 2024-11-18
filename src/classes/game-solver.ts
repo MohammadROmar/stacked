@@ -2,8 +2,9 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { Game } from './game/game';
 import { Queue } from './data-structure/queue';
-import type { GameGrid, Grid } from '../types/game';
+import type { GameGrid, Symbol } from '../types/game';
 import { Stack } from './data-structure/stack';
+import { HashTable } from './data-structure/has-table';
 
 export class GameSolver {
   private game: Game;
@@ -12,7 +13,7 @@ export class GameSolver {
   private didWin: (didWin: boolean) => void;
   private solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS';
 
-  private visited: Grid[];
+  private visited: HashTable<Symbol[][]>;
   private allStates: { from: Game | undefined; game: Game }[];
 
   constructor(
@@ -26,7 +27,7 @@ export class GameSolver {
     this.updateGrid = updateGrid;
     this.didWin = didWin;
 
-    this.visited = [];
+    this.visited = new HashTable<Symbol[][]>();
     this.allStates = [];
 
     if (this.solveAlgorithm === 'BFS') {
@@ -42,14 +43,13 @@ export class GameSolver {
     }
   }
 
-  solveBFS() {
-    this.visited = [];
-    this.allStates = [];
+  private solveBFS() {
+    this.reset();
 
     const queue = new Queue<Game>();
 
     queue.enqueue(this.game);
-    this.visited.push(this.game.grid);
+    this.visited.insert(this.game.getGrid());
     this.allStates.push({ from: undefined, game: this.game });
 
     while (!queue.isEmpty()) {
@@ -58,7 +58,8 @@ export class GameSolver {
       const movementStates = this.game.getPossibleStates(currentState!);
 
       for (const state of movementStates) {
-        if (!this.isVisited(state)) {
+        const isVisited = this.visited.get(state.getGrid());
+        if (!isVisited) {
           this.allStates.push({ from: currentState, game: state });
 
           if (state.didWin()) {
@@ -68,7 +69,7 @@ export class GameSolver {
             return;
           }
 
-          this.visited.push(state.grid);
+          this.visited.insert(state.getGrid());
           queue.enqueue(state);
         }
       }
@@ -79,14 +80,13 @@ export class GameSolver {
     throw new Error('Could not find a solution for the given grid.');
   }
 
-  solveDFS() {
-    this.visited = [];
-    this.allStates = [];
+  private solveDFS() {
+    this.reset();
 
     const stack = new Stack<Game>();
 
     stack.push(this.game);
-    this.visited.push(this.game.grid);
+    this.visited.insert(this.game.getGrid());
     this.allStates.push({ from: undefined, game: this.game });
 
     while (!stack.isEmpty()) {
@@ -95,7 +95,8 @@ export class GameSolver {
       const movementStates = this.game.getPossibleStates(currentState!);
 
       for (const state of movementStates) {
-        if (!this.isVisited(state)) {
+        const isVisited = this.visited.get(state.getGrid());
+        if (!isVisited) {
           this.allStates.push({ from: currentState, game: state });
 
           if (state.didWin()) {
@@ -106,7 +107,7 @@ export class GameSolver {
           }
 
           stack.push(state);
-          this.visited.push(state.grid);
+          this.visited.insert(state.getGrid());
         }
       }
     }
@@ -114,7 +115,7 @@ export class GameSolver {
     throw new Error('Could not find a solution');
   }
 
-  solveDFSRec(givenState: Game | undefined = undefined): boolean {
+  private solveDFSRec(givenState: Game | undefined = undefined): boolean {
     if (givenState?.didWin()) {
       const path = this.getPath(givenState);
       this.updateUI(path);
@@ -122,21 +123,20 @@ export class GameSolver {
       return true;
     }
 
-    const prevState = givenState;
-
     if (!givenState) {
-      this.visited = [];
-      this.allStates = [];
+      this.reset();
 
       givenState = this.game;
+      this.allStates.push({ from: undefined, game: this.game });
     }
 
-    if (!this.isVisited(givenState)) {
-      this.visited.push(givenState.grid);
+    const isVisited = this.visited.get(givenState.getGrid());
+    if (!isVisited) {
+      this.visited.insert(givenState.getGrid());
 
       const movementStates = givenState.getPossibleStates(givenState);
       for (const state of movementStates) {
-        this.allStates.push({ from: prevState, game: state });
+        this.allStates.push({ from: givenState, game: state });
         const didWin = this.solveDFSRec(state);
 
         if (didWin) {
@@ -148,14 +148,9 @@ export class GameSolver {
     return false;
   }
 
-  isVisited(game: Game) {
-    for (const visitedState of this.visited) {
-      if (game.checkGridEquality(game.grid, visitedState)) {
-        return true;
-      }
-    }
-
-    return false;
+  private reset() {
+    this.visited = new HashTable<Symbol[][]>();
+    this.allStates = [];
   }
 
   getPath(winningState: Game | undefined) {
@@ -174,13 +169,13 @@ export class GameSolver {
     return path.reverse().filter((_, i) => i !== 0);
   }
 
-  async updateUI(path: Game[]) {
+  private async updateUI(path: Game[]) {
     for (const state of path) {
       await this.delay();
 
       this.updateGrid(({ moves }) => ({
         moves: moves + 1,
-        cells: state.copyCurrentState().grid,
+        cells: state.copyCurrentState().getGrid(),
       }));
 
       if (state.didWin()) {
@@ -190,7 +185,7 @@ export class GameSolver {
     }
   }
 
-  async delay() {
+  private async delay() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }

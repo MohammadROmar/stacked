@@ -53,15 +53,15 @@ export class Controls {
 
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX > 0) {
-        this.game.moveRight();
+        this.game.move('RIGHT');
       } else {
-        this.game.moveLeft();
+        this.game.move('LEFT');
       }
     } else {
       if (deltaY > 0) {
-        this.game.moveDown();
+        this.game.move('DOWN');
       } else {
-        this.game.moveUp();
+        this.game.move('UP');
       }
     }
 
@@ -83,16 +83,16 @@ export class Controls {
     const isNewMove = !(direction === this.prevMovementDir);
 
     if (direction === 'UP' && isNewMove) {
-      this.game.moveUp();
+      this.game.move('UP');
       this.prevMovementDir = 'UP';
     } else if (direction === 'RIGHT' && isNewMove) {
-      this.game.moveRight();
+      this.game.move('RIGHT');
       this.prevMovementDir = 'RIGHT';
     } else if (direction === 'DOWN' && isNewMove) {
-      this.game.moveDown();
+      this.game.move('DOWN');
       this.prevMovementDir = 'DOWN';
     } else if (direction === 'LEFT' && isNewMove) {
-      this.game.moveLeft();
+      this.game.move('LEFT');
       this.prevMovementDir = 'LEFT';
     }
 
@@ -104,7 +104,7 @@ export class Controls {
   updateGameState() {
     this.updateGrid(({ moves }) => ({
       moves: moves + 1,
-      cells: this.game.copyCurrentState().grid,
+      cells: this.game.copyCurrentState().getGrid(),
     }));
 
     if (this.game.didWin()) {

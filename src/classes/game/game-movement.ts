@@ -1,12 +1,12 @@
 import { GameUtils } from './game-utils';
-import type { Grid } from '../../types/game';
+import type { Grid, MovementDirection } from '../../types/game';
 
 export class GameMovement extends GameUtils {
   constructor(rows: number, cols: number, grid: Grid) {
     super(rows, cols, grid);
   }
 
-  moveUp() {
+  protected moveUp() {
     for (let col = 0; col < this.cols; col++) {
       for (let row = 1; row < this.rows; row++) {
         if (this.isObstacle(row, col) || this.isEmpty(row, col)) {
@@ -30,7 +30,7 @@ export class GameMovement extends GameUtils {
     }
   }
 
-  moveRight() {
+  protected moveRight() {
     for (let row = 0; row < this.rows; row++) {
       for (let col = this.cols - 2; col >= 0; col--) {
         if (this.isObstacle(row, col) || this.isEmpty(row, col)) {
@@ -54,7 +54,7 @@ export class GameMovement extends GameUtils {
     }
   }
 
-  moveDown() {
+  protected moveDown() {
     for (let col = 0; col < this.cols; col++) {
       for (let row = this.rows - 2; row >= 0; row--) {
         if (this.isObstacle(row, col) || this.isEmpty(row, col)) {
@@ -78,7 +78,7 @@ export class GameMovement extends GameUtils {
     }
   }
 
-  moveLeft() {
+  protected moveLeft() {
     for (let row = 0; row < this.rows; row++) {
       for (let col = 1; col < this.cols; col++) {
         if (this.isObstacle(row, col) || this.isEmpty(row, col)) {
@@ -99,6 +99,26 @@ export class GameMovement extends GameUtils {
           this.grid[row][col] = '.';
         }
       }
+    }
+  }
+
+  public move(direction: MovementDirection) {
+    switch (direction) {
+      case 'UP':
+        this.moveUp();
+        break;
+
+      case 'RIGHT':
+        this.moveRight();
+        break;
+
+      case 'DOWN':
+        this.moveDown();
+        break;
+
+      case 'LEFT':
+        this.moveLeft();
+        break;
     }
   }
 }

@@ -8,7 +8,7 @@ export class Game extends GameMovement {
     this.calcColorCells();
   }
 
-  getPossibleStates(currState: Game) {
+  public getPossibleStates(currState: Game) {
     const upState = currState.copyCurrentState();
     upState.moveUp();
 
@@ -24,7 +24,7 @@ export class Game extends GameMovement {
     return [upState, rightState, downState, leftState];
   }
 
-  copyCurrentState() {
+  public copyCurrentState() {
     const newGrid: Grid = [];
 
     for (let i = 0; i < this.rows; i++) {
@@ -40,7 +40,7 @@ export class Game extends GameMovement {
     return copiedGame;
   }
 
-  checkGridEquality(firstGrid: Grid, secondGrid: Grid) {
+  public checkGridEquality(firstGrid: Grid, secondGrid: Grid) {
     if (
       firstGrid.length !== secondGrid.length ||
       firstGrid[0].length !== secondGrid[0].length
