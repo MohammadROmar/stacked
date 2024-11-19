@@ -5,4 +5,5 @@ export const GAME_MODES: { gameMode: GameMode; description: string }[] = [
   { gameMode: 'BFS', description: 'BFS' },
   { gameMode: 'DFS', description: 'DFS' },
   { gameMode: 'Recursive DFS', description: 'Recursive DFS' },
+  { gameMode: 'UCS', description: 'UCS' },
 ];

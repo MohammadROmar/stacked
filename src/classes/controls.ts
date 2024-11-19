@@ -105,6 +105,7 @@ export class Controls {
     this.updateGrid(({ moves }) => ({
       moves: moves + 1,
       cells: this.game.copyCurrentState().getGrid(),
+      cost: undefined,
     }));
 
     if (this.game.didWin()) {

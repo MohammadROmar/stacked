@@ -7,12 +7,12 @@ import Restart from '../components/Game/Restart';
 import Grid from '../components/Game/Grid';
 import WinningModal from '../components/Game/WinningModal';
 import ErrorModal from '../components/ErrorModal';
-import Moves from '../components/Game/Moves';
 import { Game } from '../classes/game/game';
 import { Controls } from '../classes/controls';
 import { GameSolver } from '../classes/game-solver';
 import { copyGrid } from '../utils/copy-grid';
 import type { GameGrid } from '../types/game';
+import Info from '../components/Game/Info';
 
 export default function GamePage() {
   const {
@@ -25,6 +25,7 @@ export default function GamePage() {
   const [grid, setGrid] = useState<GameGrid>({
     moves: 0,
     cells: copyGrid(initialGrid),
+    cost: solveMethod === 'UCS' ? 0 : undefined,
   });
   const [didWin, setDidWin] = useState(false);
   const [error, setError] = useState<string>();
@@ -56,14 +57,14 @@ export default function GamePage() {
 
     controls.resetControls();
     game.setNewGrid(copiedGrid);
-    setGrid({ moves: 0, cells: copiedGrid });
+    setGrid({ moves: 0, cells: copiedGrid, cost: undefined });
   }
 
   return (
     <>
       <AnimatePresence>
         {error && <ErrorModal error={error} />}
-        {didWin && <WinningModal moves={grid.moves} />}
+        {didWin && <WinningModal moves={grid.moves} cost={grid.cost} />}
       </AnimatePresence>
 
       {!didWin && solveMethod === 'USER' && (
@@ -73,7 +74,10 @@ export default function GamePage() {
       <section className="section flex flex-col justify-center items-center">
         <Title />
         <Grid cols={cols} grid={grid.cells} />
-        <Moves moves={grid.moves} />
+        <div className="flex items-center gap-4">
+          <Info info="Moves" value={grid.moves} />
+          {grid.cost !== undefined && <Info info="Cost" value={grid.cost} />}
+        </div>
       </section>
     </>
   );

@@ -1,25 +1,24 @@
 import hash from 'hash-it';
 
-export class HashTable<T> {
-  private table: Map<number, T>;
+export class HashTable<K, V> {
+  private table: Map<number, V>;
 
   constructor() {
-    this.table = new Map<number, T>();
+    this.table = new Map<number, V>();
   }
 
-  private hash(value: T) {
-    return hash(value);
+  private hash(key: K | V) {
+    return hash(key);
   }
 
-  public insert(value: T) {
-    // Using the returned hashed value as a key.
-    const hashedValue = this.hash(value);
+  public insert(key: K, value: V) {
+    const hashedKey = this.hash(key);
 
-    this.table.set(hashedValue, value);
+    this.table.set(hashedKey, value);
   }
 
-  public get(value: T) {
-    const hashedValue = this.hash(value);
+  public get(key: K) {
+    const hashedValue = this.hash(key);
 
     return this.table.get(hashedValue);
   }

@@ -2,23 +2,24 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { Game } from './game/game';
 import { Queue } from './data-structure/queue';
-import type { GameGrid, Symbol } from '../types/game';
 import { Stack } from './data-structure/stack';
 import { HashTable } from './data-structure/has-table';
+import { PriorityQueue } from './data-structure/priority-queue';
+import type { GameGrid, Grid } from '../types/game';
 
 export class GameSolver {
   private game: Game;
 
   private updateGrid: Dispatch<SetStateAction<GameGrid>>;
   private didWin: (didWin: boolean) => void;
-  private solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS';
+  private solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS' | 'UCS';
 
-  private visited: HashTable<Symbol[][]>;
-  private allStates: { from: Game | undefined; game: Game }[];
+  private visited: HashTable<Grid, Grid>;
+  private allStates: Map<Game, Game | undefined>;
 
   constructor(
     game: Game,
-    solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS',
+    solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS' | 'UCS',
     updateGrid: Dispatch<SetStateAction<GameGrid>>,
     didWin: (didWin: boolean) => void
   ) {
@@ -27,19 +28,22 @@ export class GameSolver {
     this.updateGrid = updateGrid;
     this.didWin = didWin;
 
-    this.visited = new HashTable<Symbol[][]>();
-    this.allStates = [];
+    this.visited = new HashTable<Grid, Grid>();
+    this.allStates = new Map<Game, Game | undefined>();
 
+    let hasSolution = false;
     if (this.solveAlgorithm === 'BFS') {
-      this.solveBFS();
+      hasSolution = this.solveBFS();
     } else if (this.solveAlgorithm === 'DFS') {
-      this.solveDFS();
+      hasSolution = this.solveDFS();
+    } else if (solveAlgorithm === 'UCS') {
+      hasSolution = this.solveUCS();
     } else {
-      const hasDFSSolution = this.solveDFSRec();
+      hasSolution = this.solveDFSRec();
+    }
 
-      if (!hasDFSSolution) {
-        throw new Error('Could not find a solution for the given grid.');
-      }
+    if (!hasSolution) {
+      throw new Error('Could not find a solution for the given grid.');
     }
   }
 
@@ -49,35 +53,33 @@ export class GameSolver {
     const queue = new Queue<Game>();
 
     queue.enqueue(this.game);
-    this.visited.insert(this.game.getGrid());
-    this.allStates.push({ from: undefined, game: this.game });
+    const initialGrid = this.game.getGrid();
+    this.visited.insert(initialGrid, initialGrid);
+    this.allStates.set(this.game, undefined);
 
     while (!queue.isEmpty()) {
-      const currentState = queue.dequeue();
+      const currentState = queue.dequeue()!;
 
-      const movementStates = this.game.getPossibleStates(currentState!);
+      const nextStates = currentState.getPossibleStates();
 
-      for (const state of movementStates) {
+      for (const state of nextStates) {
         const isVisited = this.visited.get(state.getGrid());
         if (!isVisited) {
-          this.allStates.push({ from: currentState, game: state });
+          this.allStates.set(state, currentState);
 
           if (state.didWin()) {
-            const path = this.getPath(state);
-            this.updateUI(path);
-
-            return;
+            this.updateUI(state);
+            return true;
           }
 
-          this.visited.insert(state.getGrid());
           queue.enqueue(state);
+          const currStateGrid = state.getGrid();
+          this.visited.insert(currStateGrid, currStateGrid);
         }
       }
     }
 
-    // If we iterate through every possible state and we reached here
-    // it means the game could not be solved.
-    throw new Error('Could not find a solution for the given grid.');
+    return false;
   }
 
   private solveDFS() {
@@ -86,39 +88,39 @@ export class GameSolver {
     const stack = new Stack<Game>();
 
     stack.push(this.game);
-    this.visited.insert(this.game.getGrid());
-    this.allStates.push({ from: undefined, game: this.game });
+    const initialGrid = this.game.getGrid();
+    this.visited.insert(initialGrid, initialGrid);
+    this.allStates.set(this.game, undefined);
 
     while (!stack.isEmpty()) {
-      const currentState = stack.pop();
+      const currentState = stack.pop()!;
 
-      const movementStates = this.game.getPossibleStates(currentState!);
+      const nextStates = currentState.getPossibleStates();
 
-      for (const state of movementStates) {
+      for (const state of nextStates) {
         const isVisited = this.visited.get(state.getGrid());
         if (!isVisited) {
-          this.allStates.push({ from: currentState, game: state });
+          this.allStates.set(state, currentState);
 
           if (state.didWin()) {
-            const path = this.getPath(state);
-            this.updateUI(path);
+            this.updateUI(state);
 
-            return;
+            return true;
           }
 
           stack.push(state);
-          this.visited.insert(state.getGrid());
+          const currStateGrid = state.getGrid();
+          this.visited.insert(currStateGrid, currStateGrid);
         }
       }
     }
 
-    throw new Error('Could not find a solution');
+    return false;
   }
 
   private solveDFSRec(givenState: Game | undefined = undefined): boolean {
     if (givenState?.didWin()) {
-      const path = this.getPath(givenState);
-      this.updateUI(path);
+      this.updateUI(givenState);
 
       return true;
     }
@@ -127,20 +129,58 @@ export class GameSolver {
       this.reset();
 
       givenState = this.game;
-      this.allStates.push({ from: undefined, game: this.game });
+      this.allStates.set(this.game, undefined);
     }
 
     const isVisited = this.visited.get(givenState.getGrid());
     if (!isVisited) {
-      this.visited.insert(givenState.getGrid());
+      const grid = givenState.getGrid();
+      this.visited.insert(grid, grid);
 
-      const movementStates = givenState.getPossibleStates(givenState);
-      for (const state of movementStates) {
-        this.allStates.push({ from: givenState, game: state });
+      const nextStates = givenState.getPossibleStates();
+      for (const state of nextStates) {
+        this.allStates.set(state, givenState);
         const didWin = this.solveDFSRec(state);
 
         if (didWin) {
-          return didWin;
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private solveUCS() {
+    this.reset();
+
+    const pq = new PriorityQueue<Game>();
+    const visited = new HashTable<Grid, number>();
+
+    visited.insert(this.game.getGrid(), 0);
+    pq.enqueue({ item: this.game, priority: 0 });
+
+    while (!pq.isEmpty()) {
+      const currState = pq.dequeue()!;
+      const grid = currState.item.getGrid();
+      const cost = currState.priority;
+
+      const oldCost = visited.get(grid);
+      if (!oldCost || (oldCost && oldCost > cost)) {
+        visited.insert(grid, currState.priority);
+
+        if (currState.item.didWin()) {
+          this.updateUI(currState.item, visited);
+
+          return true;
+        }
+
+        const nextStates = currState.item.getPossibleStates();
+        for (let i = 0; i < nextStates.length; i++) {
+          const state = nextStates[i];
+
+          pq.enqueue({ item: state, priority: cost + i + 1 });
+          this.allStates.set(state, currState.item);
         }
       }
     }
@@ -149,8 +189,8 @@ export class GameSolver {
   }
 
   private reset() {
-    this.visited = new HashTable<Symbol[][]>();
-    this.allStates = [];
+    this.visited = new HashTable<Grid, Grid>();
+    this.allStates = new Map<Game, Game | undefined>();
   }
 
   getPath(winningState: Game | undefined) {
@@ -161,21 +201,26 @@ export class GameSolver {
     while (currState) {
       path.push(currState);
 
-      currState = this.allStates.find(
-        (state) => state.game === currState
-      )?.from;
+      currState = this.allStates.get(currState);
     }
 
     return path.reverse().filter((_, i) => i !== 0);
   }
 
-  private async updateUI(path: Game[]) {
+  private async updateUI(
+    winningState: Game | undefined,
+    visited?: HashTable<Grid, number>
+  ) {
+    const path = this.getPath(winningState);
+
     for (const state of path) {
       await this.delay();
 
+      const grid = state.copyCurrentState().getGrid();
       this.updateGrid(({ moves }) => ({
         moves: moves + 1,
-        cells: state.copyCurrentState().getGrid(),
+        cells: grid,
+        cost: visited?.get(grid),
       }));
 
       if (state.didWin()) {

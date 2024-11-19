@@ -21,4 +21,4 @@ export type Game = {
   grid: Grid;
 };
 
-export type GameGrid = { moves: number; cells: Grid };
+export type GameGrid = { moves: number; cells: Grid; cost: number | undefined };

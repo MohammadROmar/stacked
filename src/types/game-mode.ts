@@ -1,1 +1,1 @@
-export type GameMode = 'USER' | 'BFS' | 'DFS' | 'Recursive DFS';
+export type GameMode = 'USER' | 'BFS' | 'DFS' | 'Recursive DFS' | 'UCS';

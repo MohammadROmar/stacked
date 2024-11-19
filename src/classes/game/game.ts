@@ -8,17 +8,17 @@ export class Game extends GameMovement {
     this.calcColorCells();
   }
 
-  public getPossibleStates(currState: Game) {
-    const upState = currState.copyCurrentState();
+  public getPossibleStates() {
+    const upState = this.copyCurrentState();
     upState.moveUp();
 
-    const rightState = currState.copyCurrentState();
+    const rightState = this.copyCurrentState();
     rightState.moveRight();
 
-    const downState = currState.copyCurrentState();
+    const downState = this.copyCurrentState();
     downState.moveDown();
 
-    const leftState = currState.copyCurrentState();
+    const leftState = this.copyCurrentState();
     leftState.moveLeft();
 
     return [upState, rightState, downState, leftState];
