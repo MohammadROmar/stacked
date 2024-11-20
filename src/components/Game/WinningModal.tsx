@@ -17,7 +17,10 @@ export default function WinningModal({ moves, cost }: WinningModalProps) {
       <p className="p-2">
         It took {solveMethod === 'USER' ? 'you' : ''} {moves}
         {moves > 1 ? ' moves' : ' move'}
-        {cost !== undefined ? ` and ${cost} cost` : ' '} to win!
+        {cost !== undefined
+          ? ` and ${cost} ${solveMethod === 'A*' ? 'A* score' : 'cost'}`
+          : ' '}{' '}
+        to win!
       </p>
       <button onClick={() => dispatch(setPage('START'))} className="button">
         Back to start

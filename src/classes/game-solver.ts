@@ -314,6 +314,6 @@ export class GameSolver {
   }
 
   private async delay() {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }

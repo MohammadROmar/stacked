@@ -77,7 +77,12 @@ export default function GamePage() {
         <Grid cols={cols} grid={grid.cells} />
         <div className="flex items-center gap-4">
           <Info info="Moves" value={grid.moves} />
-          {grid.cost !== undefined && <Info info="Cost" value={grid.cost} />}
+          {grid.cost !== undefined && (
+            <Info
+              info={solveMethod === 'A*' ? 'A* Score' : 'Cost'}
+              value={grid.cost}
+            />
+          )}
         </div>
       </section>
     </>
