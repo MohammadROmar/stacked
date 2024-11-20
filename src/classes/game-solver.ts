@@ -1,29 +1,30 @@
 import type { Dispatch, SetStateAction } from 'react';
 
-import { Game } from './game/game';
+import { Game } from './game';
 import { Queue } from './data-structure/queue';
 import { Stack } from './data-structure/stack';
-import { HashTable } from './data-structure/has-table';
+import { HashTable } from './data-structure/hash-table';
 import { PriorityQueue } from './data-structure/priority-queue';
-import type { GameGrid, Grid } from '../types/game';
+import type { GameGrid, Grid, Symbol } from '../types/game';
+import type { GameMode } from '../types/game-mode';
 
 export class GameSolver {
-  private game: Game;
+  private initialState: Game;
 
   private updateGrid: Dispatch<SetStateAction<GameGrid>>;
   private didWin: (didWin: boolean) => void;
-  private solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS' | 'UCS';
+  private solveAlgorithm: GameMode;
 
   private visited: HashTable<Grid, Grid>;
   private allStates: Map<Game, Game | undefined>;
 
   constructor(
     game: Game,
-    solveAlgorithm: 'BFS' | 'DFS' | 'Recursive DFS' | 'UCS',
+    solveAlgorithm: GameMode,
     updateGrid: Dispatch<SetStateAction<GameGrid>>,
     didWin: (didWin: boolean) => void
   ) {
-    this.game = game;
+    this.initialState = game;
     this.solveAlgorithm = solveAlgorithm;
     this.updateGrid = updateGrid;
     this.didWin = didWin;
@@ -31,15 +32,25 @@ export class GameSolver {
     this.visited = new HashTable<Grid, Grid>();
     this.allStates = new Map<Game, Game | undefined>();
 
+    this.solve();
+  }
+
+  private solve() {
     let hasSolution = false;
+
     if (this.solveAlgorithm === 'BFS') {
       hasSolution = this.solveBFS();
     } else if (this.solveAlgorithm === 'DFS') {
       hasSolution = this.solveDFS();
-    } else if (solveAlgorithm === 'UCS') {
-      hasSolution = this.solveUCS();
-    } else {
+    } else if (this.solveAlgorithm === 'Recursive DFS') {
       hasSolution = this.solveDFSRec();
+    } else if (this.solveAlgorithm === 'UCS') {
+      hasSolution = this.solveUCS();
+    } else if (this.solveAlgorithm === 'A*') {
+      hasSolution = this.solveAStar();
+    } else {
+      hasSolution = this.solveHillClimbing();
+      throw new Error('Not implemented yet!');
     }
 
     if (!hasSolution) {
@@ -52,10 +63,10 @@ export class GameSolver {
 
     const queue = new Queue<Game>();
 
-    queue.enqueue(this.game);
-    const initialGrid = this.game.getGrid();
+    queue.enqueue(this.initialState);
+    const initialGrid = this.initialState.getGrid();
     this.visited.insert(initialGrid, initialGrid);
-    this.allStates.set(this.game, undefined);
+    this.allStates.set(this.initialState, undefined);
 
     while (!queue.isEmpty()) {
       const currentState = queue.dequeue()!;
@@ -87,10 +98,10 @@ export class GameSolver {
 
     const stack = new Stack<Game>();
 
-    stack.push(this.game);
-    const initialGrid = this.game.getGrid();
+    stack.push(this.initialState);
+    const initialGrid = this.initialState.getGrid();
     this.visited.insert(initialGrid, initialGrid);
-    this.allStates.set(this.game, undefined);
+    this.allStates.set(this.initialState, undefined);
 
     while (!stack.isEmpty()) {
       const currentState = stack.pop()!;
@@ -128,13 +139,13 @@ export class GameSolver {
     if (!givenState) {
       this.reset();
 
-      givenState = this.game;
-      this.allStates.set(this.game, undefined);
+      givenState = this.initialState;
+      this.allStates.set(this.initialState, undefined);
     }
 
-    const isVisited = this.visited.get(givenState.getGrid());
+    const grid = givenState.getGrid();
+    const isVisited = this.visited.get(grid);
     if (!isVisited) {
-      const grid = givenState.getGrid();
       this.visited.insert(grid, grid);
 
       const nextStates = givenState.getPossibleStates();
@@ -157,35 +168,95 @@ export class GameSolver {
     const pq = new PriorityQueue<Game>();
     const visited = new HashTable<Grid, number>();
 
-    visited.insert(this.game.getGrid(), 0);
-    pq.enqueue({ item: this.game, priority: 0 });
+    // visited.insert(this.game.getGrid(), 0);
+    pq.enqueue({ item: this.initialState, priority: 0 });
 
     while (!pq.isEmpty()) {
-      const currState = pq.dequeue()!;
-      const grid = currState.item.getGrid();
-      const cost = currState.priority;
+      const { item: currState, priority: cost } = pq.dequeue()!;
+      const grid = currState.getGrid();
 
       const oldCost = visited.get(grid);
       if (!oldCost || (oldCost && oldCost > cost)) {
-        visited.insert(grid, currState.priority);
+        visited.insert(grid, cost);
 
-        if (currState.item.didWin()) {
-          this.updateUI(currState.item, visited);
+        if (currState.didWin()) {
+          this.updateUI(currState, visited);
 
           return true;
         }
 
-        const nextStates = currState.item.getPossibleStates();
+        const nextStates = currState.getPossibleStates();
         for (let i = 0; i < nextStates.length; i++) {
           const state = nextStates[i];
 
           pq.enqueue({ item: state, priority: cost + i + 1 });
-          this.allStates.set(state, currState.item);
+          this.allStates.set(state, currState);
         }
       }
     }
 
     return false;
+  }
+
+  private solveAStar() {
+    this.reset();
+
+    const pq = new PriorityQueue<{ game: Game; cost: number }>();
+    const visited = new HashTable<Grid, number>();
+
+    pq.enqueue({
+      item: { game: this.initialState, cost: 0 },
+      priority: this.getManhatanDistance(this.initialState),
+    });
+    this.allStates.set(this.initialState, undefined);
+
+    while (!pq.isEmpty()) {
+      const { item, priority: score } = pq.dequeue()!;
+      const { game: currState, cost: currCost } = item;
+
+      const prevScore = visited.get(currState.getGrid());
+      if (!prevScore || (prevScore && prevScore > score)) {
+        visited.insert(currState.getGrid(), score);
+
+        if (currState.didWin()) {
+          this.updateUI(currState, visited);
+
+          return true;
+        }
+
+        const nextStates = currState.getPossibleStates();
+        for (let i = 0; i < nextStates.length; i++) {
+          const state = nextStates[i];
+          const cost = currCost + i + 1;
+          const heuristic = this.getManhatanDistance(state);
+
+          pq.enqueue({
+            item: { game: state, cost },
+            priority: cost + heuristic,
+          });
+          this.allStates.set(state, currState);
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private solveHillClimbing() {
+    return false;
+  }
+
+  private getManhatanDistance(state: Game) {
+    let remaining = 0;
+
+    for (const color in state.getColorsCount()) {
+      const colorCount = state.getColor(color as Symbol);
+      if (colorCount && colorCount > 1) {
+        remaining += colorCount - 1;
+      }
+    }
+
+    return remaining;
   }
 
   private reset() {
@@ -213,14 +284,26 @@ export class GameSolver {
   ) {
     const path = this.getPath(winningState);
 
+    if (
+      this.solveAlgorithm === 'A*' ||
+      this.solveAlgorithm === 'Hill Climbing'
+    ) {
+      this.updateGrid((prevState) => ({
+        ...prevState,
+        cost: visited!.get(this.initialState.getGrid()),
+      }));
+    }
+
     for (const state of path) {
       await this.delay();
 
       const grid = state.copyCurrentState().getGrid();
+      const cost = visited?.get(grid);
+
       this.updateGrid(({ moves }) => ({
         moves: moves + 1,
         cells: grid,
-        cost: visited?.get(grid),
+        cost,
       }));
 
       if (state.didWin()) {
@@ -231,6 +314,6 @@ export class GameSolver {
   }
 
   private async delay() {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 2500));
   }
 }

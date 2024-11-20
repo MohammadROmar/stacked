@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 
-import { Game } from './game/game';
+import { Game } from './game';
 import { controlKeys } from '../data/contol-keys';
 import type { GameGrid, MovementDirection } from '../types/game';
 

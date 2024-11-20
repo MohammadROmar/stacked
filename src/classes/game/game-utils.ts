@@ -1,5 +1,5 @@
 import { initialCellsCount } from '../../data/initial-color-cells-count';
-import type { Grid, MovementDirection } from '../../types/game';
+import type { Grid, MovementDirection, Symbol } from '../../types/game';
 
 export class GameUtils {
   protected rows: number;
@@ -34,6 +34,14 @@ export class GameUtils {
 
   public getGrid() {
     return this.grid;
+  }
+
+  public getColorsCount() {
+    return this.colorCellsCount;
+  }
+
+  public getColor(color: Symbol) {
+    return this.colorCellsCount[color];
   }
 
   protected canMove(row: number, col: number, direction: MovementDirection) {
@@ -94,7 +102,7 @@ export class GameUtils {
 
   public didWin() {
     const colorCellsValues = Object.values(this.colorCellsCount).filter(
-      (cells) => cells != null
+      (cells) => cells !== null
     );
 
     let finishedCells = 0;

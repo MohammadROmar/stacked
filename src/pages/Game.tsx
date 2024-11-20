@@ -2,17 +2,18 @@ import { useState, useEffect, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 import { useGameSelector } from '../store/hooks';
+import WinningModal from '../components/Game/WinningModal';
+import ErrorModal from '../components/ErrorModal';
 import Title from '../components/Title';
 import Restart from '../components/Game/Restart';
 import Grid from '../components/Game/Grid';
-import WinningModal from '../components/Game/WinningModal';
-import ErrorModal from '../components/ErrorModal';
-import { Game } from '../classes/game/game';
+import Info from '../components/Game/Info';
+import { Game } from '../classes/game';
 import { Controls } from '../classes/controls';
 import { GameSolver } from '../classes/game-solver';
 import { copyGrid } from '../utils/copy-grid';
+import { isWeighted } from '../utils/is-weighted';
 import type { GameGrid } from '../types/game';
-import Info from '../components/Game/Info';
 
 export default function GamePage() {
   const {
@@ -25,7 +26,7 @@ export default function GamePage() {
   const [grid, setGrid] = useState<GameGrid>({
     moves: 0,
     cells: copyGrid(initialGrid),
-    cost: solveMethod === 'UCS' ? 0 : undefined,
+    cost: isWeighted(solveMethod) ? 0 : undefined,
   });
   const [didWin, setDidWin] = useState(false);
   const [error, setError] = useState<string>();
