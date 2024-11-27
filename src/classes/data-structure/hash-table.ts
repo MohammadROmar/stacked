@@ -22,4 +22,8 @@ export class HashTable<K, V> {
 
     return this.table.get(hashedValue);
   }
+
+  public size() {
+    return this.table.size;
+  }
 }

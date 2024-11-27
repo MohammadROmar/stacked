@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 type InfoProps = {
   info: string;
-  value: number;
+  value: number | string;
 };
 
 export default function Info({ info, value }: InfoProps) {

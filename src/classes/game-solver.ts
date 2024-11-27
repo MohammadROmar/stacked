@@ -18,6 +18,8 @@ export class GameSolver {
   private visited: HashTable<Grid, Grid>;
   private allStates: Map<Game, Game | undefined>;
 
+  private startTime: number;
+
   constructor(
     game: Game,
     solveAlgorithm: GameMode,
@@ -32,11 +34,14 @@ export class GameSolver {
     this.visited = new HashTable<Grid, Grid>();
     this.allStates = new Map<Game, Game | undefined>();
 
+    this.startTime = 0;
+
     this.solve();
   }
 
   private solve() {
     let hasSolution = false;
+    this.startTime = Date.now();
 
     if (this.solveAlgorithm === 'BFS') {
       hasSolution = this.solveBFS();
@@ -49,8 +54,7 @@ export class GameSolver {
     } else if (this.solveAlgorithm === 'A*') {
       hasSolution = this.solveAStar();
     } else {
-      hasSolution = this.solveHillClimbing();
-      throw new Error('Not implemented yet!');
+      hasSolution = this.solveModifiedHillClimbing();
     }
 
     if (!hasSolution) {
@@ -59,8 +63,6 @@ export class GameSolver {
   }
 
   private solveBFS() {
-    this.reset();
-
     const queue = new Queue<Game>();
 
     queue.enqueue(this.initialState);
@@ -94,8 +96,6 @@ export class GameSolver {
   }
 
   private solveDFS() {
-    this.reset();
-
     const stack = new Stack<Game>();
 
     stack.push(this.initialState);
@@ -137,8 +137,6 @@ export class GameSolver {
     }
 
     if (!givenState) {
-      this.reset();
-
       givenState = this.initialState;
       this.allStates.set(this.initialState, undefined);
     }
@@ -163,12 +161,9 @@ export class GameSolver {
   }
 
   private solveUCS() {
-    this.reset();
-
     const pq = new PriorityQueue<Game>();
     const visited = new HashTable<Grid, number>();
 
-    // visited.insert(this.game.getGrid(), 0);
     pq.enqueue({ item: this.initialState, priority: 0 });
 
     while (!pq.isEmpty()) {
@@ -199,14 +194,12 @@ export class GameSolver {
   }
 
   private solveAStar() {
-    this.reset();
-
     const pq = new PriorityQueue<{ game: Game; cost: number }>();
     const visited = new HashTable<Grid, number>();
 
     pq.enqueue({
       item: { game: this.initialState, cost: 0 },
-      priority: this.getManhatanDistance(this.initialState),
+      priority: this.getHeuristic(this.initialState),
     });
     this.allStates.set(this.initialState, undefined);
 
@@ -228,7 +221,7 @@ export class GameSolver {
         for (let i = 0; i < nextStates.length; i++) {
           const state = nextStates[i];
           const cost = currCost + i + 1;
-          const heuristic = this.getManhatanDistance(state);
+          const heuristic = this.getHeuristic(state);
 
           pq.enqueue({
             item: { game: state, cost },
@@ -242,11 +235,80 @@ export class GameSolver {
     return false;
   }
 
-  private solveHillClimbing() {
+  protected solveHillClimbing() {
+    const visited = new HashTable<Grid, number>();
+
+    let currentState = this.initialState;
+    let oldState = currentState;
+    let currentHeuristic = this.getHeuristic(currentState);
+    visited.insert(currentState.getGrid(), currentHeuristic);
+    this.allStates.set(currentState, undefined);
+
+    while (!currentState.didWin()) {
+      const nextStates = currentState.getPossibleStates();
+      for (const state of nextStates) {
+        const heuristic = this.getHeuristic(state);
+
+        if (heuristic < currentHeuristic) {
+          this.allStates.set(state, currentState);
+          visited.insert(state.getGrid(), heuristic);
+          oldState = currentState;
+          currentState = state;
+          currentHeuristic = heuristic;
+        }
+      }
+
+      if (currentState === oldState) {
+        break;
+      }
+    }
+
+    if (currentState.didWin()) {
+      this.updateUI(currentState, visited);
+      return true;
+    }
+
     return false;
   }
 
-  private getManhatanDistance(state: Game) {
+  private solveModifiedHillClimbing(
+    givenState?: Game,
+    visited?: HashTable<Grid, number>
+  ) {
+    if (givenState?.didWin()) {
+      this.updateUI(givenState, visited);
+      return true;
+    }
+
+    if (!givenState) {
+      givenState = this.initialState;
+      visited = new HashTable<Grid, number>();
+      this.allStates.set(givenState, undefined);
+    }
+
+    const oldHeuristic = visited?.get(givenState.getGrid());
+    if (!oldHeuristic || oldHeuristic > this.getHeuristic(givenState)) {
+      visited?.insert(givenState.getGrid(), this.getHeuristic(givenState));
+
+      const nextStates = givenState.getPossibleStates();
+      for (const state of nextStates) {
+        const heuristic = this.getHeuristic(state);
+
+        if (!oldHeuristic || heuristic <= oldHeuristic) {
+          this.allStates.set(state, givenState);
+          const didWin = this.solveModifiedHillClimbing(state, visited);
+
+          if (didWin) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private getHeuristic(state: Game) {
     let remaining = 0;
 
     for (const color in state.getColorsCount()) {
@@ -257,11 +319,6 @@ export class GameSolver {
     }
 
     return remaining;
-  }
-
-  private reset() {
-    this.visited = new HashTable<Grid, Grid>();
-    this.allStates = new Map<Game, Game | undefined>();
   }
 
   getPath(winningState: Game | undefined) {
@@ -282,17 +339,15 @@ export class GameSolver {
     winningState: Game | undefined,
     visited?: HashTable<Grid, number>
   ) {
+    const time = Date.now() - this.startTime;
     const path = this.getPath(winningState);
 
-    if (
-      this.solveAlgorithm === 'A*' ||
-      this.solveAlgorithm === 'Hill Climbing'
-    ) {
-      this.updateGrid((prevState) => ({
-        ...prevState,
-        cost: visited!.get(this.initialState.getGrid()),
-      }));
-    }
+    this.updateGrid((prevState) => ({
+      ...prevState,
+      cost: visited?.get(this.initialState.getGrid()),
+      totalVisitedStates: this.allStates.size,
+      time,
+    }));
 
     for (const state of path) {
       await this.delay();
@@ -304,6 +359,8 @@ export class GameSolver {
         moves: moves + 1,
         cells: grid,
         cost,
+        totalVisitedStates: this.allStates.size,
+        time,
       }));
 
       if (state.didWin()) {

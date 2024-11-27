@@ -1,15 +1,13 @@
 import { motion } from 'framer-motion';
 
+import { useGameSelector } from '../../store/hooks';
+import Cell from './Cell';
 import { staggeredListAnimation } from '../../animation/staggered-list';
 import type { Grid } from '../../types/game';
-import Cell from './Cell';
 
-type GameGridProps = {
-  cols: number;
-  grid: Grid;
-};
+export default function GameGrid({ grid }: { grid: Grid }) {
+  const cols = useGameSelector((state) => state.initialGame.data.cols);
 
-export default function GameGrid({ cols, grid }: GameGridProps) {
   return (
     <motion.ul
       {...staggeredListAnimation}

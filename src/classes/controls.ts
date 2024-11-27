@@ -106,6 +106,8 @@ export class Controls {
       moves: moves + 1,
       cells: this.game.copyCurrentState().getGrid(),
       cost: undefined,
+      totalVisitedStates: undefined,
+      time: undefined,
     }));
 
     if (this.game.didWin()) {

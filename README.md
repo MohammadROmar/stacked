@@ -1,4 +1,4 @@
-# Stacked
+# Stacked - Game Solver
 
 Slide and stack your way to combine the colors!
 
@@ -6,15 +6,15 @@ Slide and stack your way to combine the colors!
 
 ## Technologies
 
-- React.js.
+- React with TypeScript.
 - Tailwind CSS.
-- Redux Toolkit.
+- Redux Toolkit - state management.
 
 ---
 
 ### Links
 
-**Preview live [here](https://stacked-beta.vercel.app/)**
+**Preview live [here](https://stacked-game.vercel.app/)**
 
 Original Game: [coolmathgames.com](https://www.coolmathgames.com/0-stacked)
 
