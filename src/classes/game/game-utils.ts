@@ -1,5 +1,7 @@
 import { initialCellsCount } from '../../data/initial-color-cells-count';
-import type { Grid, MovementDirection, Symbol } from '../../types/game';
+import type { MovementDirection } from '../../types/movement-direction';
+import type { Grid } from '../../types/grid';
+import type { Symbol } from '../../types/symbol';
 
 export class GameUtils {
   protected rows: number;

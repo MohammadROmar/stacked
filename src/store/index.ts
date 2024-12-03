@@ -8,8 +8,8 @@ export const store = configureStore({
   reducer: {
     initialGame: initialGameReducer,
     mode: modeReducer,
-    page: pageReducer,
-  },
+    page: pageReducer
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

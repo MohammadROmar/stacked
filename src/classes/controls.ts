@@ -2,19 +2,20 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { Game } from './game';
 import { controlKeys } from '../data/contol-keys';
-import type { GameGrid, MovementDirection } from '../types/game';
+import type { GameState } from '../types/game-state';
+import type { MovementDirection } from '../types/movement-direction';
 
 export class Controls {
   public game: Game;
-  public updateGrid: Dispatch<SetStateAction<GameGrid>>;
+  public updateGrid: Dispatch<SetStateAction<GameState>>;
   public didWin: (didWin: boolean) => void;
   private startX: number;
   private startY: number;
-  private prevMovementDir: MovementDirection | null;
+  private prevMovementDir: MovementDirection | undefined;
 
   constructor(
     game: Game,
-    updateGrid: Dispatch<SetStateAction<GameGrid>>,
+    updateGrid: Dispatch<SetStateAction<GameState>>,
     didWin: (didWin: boolean) => void
   ) {
     this.game = game;
@@ -22,27 +23,29 @@ export class Controls {
     this.didWin = didWin;
     this.startX = 0;
     this.startY = 0;
-    this.prevMovementDir = null;
+    this.prevMovementDir = undefined;
+
+    this.setupControls();
   }
 
-  setupControls() {
+  public setupControls() {
     this.mobileControls();
     this.keyboardControls();
   }
 
-  mobileControls() {
+  private mobileControls() {
     document.addEventListener('touchstart', this.touchStartEvent);
     document.addEventListener('touchmove', this.touchMoveEvent, {
       passive: false,
     });
   }
 
-  touchStartEvent = (event: TouchEvent) => {
+  private touchStartEvent = (event: TouchEvent) => {
     this.startX = event.touches[0].clientX;
     this.startY = event.touches[0].clientY;
   };
 
-  touchMoveEvent = (event: TouchEvent) => {
+  private touchMoveEvent = (event: TouchEvent) => {
     event.preventDefault();
 
     const moveX = event.touches[0].clientX;
@@ -51,28 +54,39 @@ export class Controls {
     const deltaX = moveX - this.startX;
     const deltaY = moveY - this.startY;
 
+    let direction: MovementDirection | undefined = undefined;
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (deltaX > 0) {
+      if (deltaX > 0 && this.prevMovementDir !== 'RIGHT') {
         this.game.move('RIGHT');
-      } else {
+        direction = 'RIGHT';
+        this.prevMovementDir = 'RIGHT';
+      } else if (deltaX < 0 && this.prevMovementDir !== 'LEFT') {
         this.game.move('LEFT');
+        direction = 'LEFT';
+        this.prevMovementDir = 'LEFT';
       }
     } else {
-      if (deltaY > 0) {
+      if (deltaY > 0 && this.prevMovementDir !== 'DOWN') {
         this.game.move('DOWN');
-      } else {
+        direction = 'DOWN';
+        this.prevMovementDir = 'DOWN';
+      } else if (deltaY < 0 && this.prevMovementDir !== 'UP') {
         this.game.move('UP');
+        direction = 'UP';
+        this.prevMovementDir = 'UP';
       }
     }
 
-    this.updateGameState();
+    if (direction) {
+      this.updateGameState();
+    }
   };
 
-  keyboardControls() {
+  private keyboardControls() {
     document.addEventListener('keydown', this.keydownEvent);
   }
 
-  keydownEvent = (event: KeyboardEvent) => {
+  private keydownEvent = (event: KeyboardEvent) => {
     const key = event.key;
 
     if (!controlKeys.includes(key)) {
@@ -101,12 +115,14 @@ export class Controls {
     }
   };
 
-  updateGameState() {
-    this.updateGrid(({ moves }) => ({
-      moves: moves + 1,
+  private updateGameState() {
+    this.updateGrid((prevState) => ({
       cells: this.game.copyCurrentState().getGrid(),
       cost: undefined,
+      moveDirection: this.prevMovementDir,
       totalVisitedStates: undefined,
+      moves: prevState.moves + 1,
+      prevGrid: prevState.cells,
       time: undefined,
     }));
 
@@ -116,7 +132,7 @@ export class Controls {
     }
   }
 
-  getDirection(key: string): MovementDirection {
+  private getDirection(key: string): MovementDirection {
     if (key === 'ArrowUp' || key === 'w' || key === 'W') {
       return 'UP';
     } else if (key === 'ArrowRight' || key === 'd' || key === 'D') {
@@ -128,11 +144,7 @@ export class Controls {
     }
   }
 
-  resetControls() {
-    this.prevMovementDir = null;
-  }
-
-  removeControls() {
+  private removeControls() {
     document.removeEventListener('keydown', this.keydownEvent);
     document.removeEventListener('touchstart', this.touchStartEvent);
     document.removeEventListener('touchmove', this.touchMoveEvent);

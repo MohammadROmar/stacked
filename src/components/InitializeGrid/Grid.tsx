@@ -6,8 +6,8 @@ import { getImageName } from '../../utils/get-image-name';
 import { gameCellVariants } from '../../animation/variants/game-cell';
 import { staggeredListAnimation } from '../../animation/staggered-list';
 import { setInitialGame } from '../../store/slices/initial-game';
-import type { Symbol } from '../../types/game';
 import { copyGrid } from '../../utils/copy-grid';
+import type { Symbol } from '../../types/symbol';
 
 type InitGridProps = {
   selectedColor: Symbol;
@@ -20,6 +20,7 @@ export default function Grid({ selectedColor }: InitGridProps) {
 
   return (
     <motion.ul
+      layoutId="grid"
       key={rows + '' + cols}
       {...staggeredListAnimation}
       className="game-grid"

@@ -1,24 +1,40 @@
-import { motion } from 'framer-motion';
-
 import { useGameSelector } from '../../store/hooks';
+import EmptyGrid from './EmptyGrid';
 import Cell from './Cell';
-import { staggeredListAnimation } from '../../animation/staggered-list';
-import type { Grid } from '../../types/game';
+import type { Grid } from '../../types/grid';
+import type { MovementDirection } from '../../types/movement-direction';
 
-export default function GameGrid({ grid }: { grid: Grid }) {
-  const cols = useGameSelector((state) => state.initialGame.data.cols);
+type AnimatedGridProps = {
+  grid: Grid;
+  prevGrid: Grid | undefined;
+  moveDirection: MovementDirection | undefined;
+};
+
+function Grid({ grid: currGrid, prevGrid, moveDirection }: AnimatedGridProps) {
+  const { grid, cols } = useGameSelector((state) => state.initialGame.data);
 
   return (
-    <motion.ul
-      {...staggeredListAnimation}
-      className="game-grid"
-      style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-    >
-      {grid.map((gridItems, i) =>
-        gridItems.map((item, j) => (
-          <Cell key={i + '' + j + '' + item} item={item} />
-        ))
-      )}
-    </motion.ul>
+    <div className="relative">
+      <EmptyGrid />
+
+      <ul
+        className="game-grid gap-0 bg-transparent absolute inset-0"
+        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+      >
+        {grid.map((symbols, i) =>
+          symbols.map((symbol, j) => (
+            <Cell
+              key={i + '' + j + '' + symbol}
+              cell={{ x: i, y: j, symbol }}
+              grid={currGrid}
+              prevGrid={prevGrid}
+              moveDirection={moveDirection}
+            />
+          ))
+        )}
+      </ul>
+    </div>
   );
 }
+
+export default Grid;

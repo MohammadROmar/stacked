@@ -1,9 +1,13 @@
 import { GameUtils } from './game-utils';
-import type { Grid, MovementDirection } from '../../types/game';
+import type { MovementDirection } from '../../types/movement-direction';
+import type { Grid } from '../../types/grid';
 
 export class GameMovement extends GameUtils {
+  protected lastMoveDirection: MovementDirection | undefined;
+
   constructor(rows: number, cols: number, grid: Grid) {
     super(rows, cols, grid);
+    this.lastMoveDirection = undefined;
   }
 
   protected moveUp() {
@@ -103,22 +107,39 @@ export class GameMovement extends GameUtils {
   }
 
   public move(direction: MovementDirection) {
+    if (this.lastMoveDirection && this.lastMoveDirection === direction) {
+      return;
+    }
+
     switch (direction) {
       case 'UP':
         this.moveUp();
+        this.lastMoveDirection = 'UP';
         break;
 
       case 'RIGHT':
         this.moveRight();
+        this.lastMoveDirection = 'RIGHT';
         break;
 
       case 'DOWN':
         this.moveDown();
+        this.lastMoveDirection = 'DOWN';
         break;
 
       case 'LEFT':
         this.moveLeft();
+        this.lastMoveDirection = 'LEFT';
         break;
     }
+  }
+
+  public getMoveDirection() {
+    return this.lastMoveDirection;
+  }
+
+  public setNewGrid(grid: Grid) {
+    super.setNewGrid(grid);
+    this.lastMoveDirection = undefined;
   }
 }

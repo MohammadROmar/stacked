@@ -24,7 +24,7 @@ export default function HowToPlayBtn() {
         {modalIsOpen && <HowToPlayModal setIsOpen={setModalIsOpen} />}
       </AnimatePresence>
 
-      <section className="section w-auto p-0 rounded-full absolute bottom-4 left-4">
+      <section className="section w-auto p-0 rounded-full fixed bottom-4 left-4">
         <button
           onClick={() => setModalIsOpen(true)}
           className="flex justify-center gap-1"

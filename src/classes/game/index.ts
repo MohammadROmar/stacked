@@ -1,5 +1,5 @@
 import { GameMovement } from './game-movement';
-import type { Grid } from '../../types/game';
+import type { Grid } from '../../types/grid';
 
 export class Game extends GameMovement {
   constructor(rows: number, cols: number, grid: Grid) {
@@ -10,16 +10,16 @@ export class Game extends GameMovement {
 
   public getPossibleStates() {
     const upState = this.copyCurrentState();
-    upState.moveUp();
+    upState.move('UP');
 
     const rightState = this.copyCurrentState();
-    rightState.moveRight();
+    rightState.move('RIGHT');
 
     const downState = this.copyCurrentState();
-    downState.moveDown();
+    downState.move('DOWN');
 
     const leftState = this.copyCurrentState();
-    leftState.moveLeft();
+    leftState.move('LEFT');
 
     return [upState, rightState, downState, leftState];
   }

@@ -4,15 +4,15 @@ import { useGameSelector } from '../store/hooks';
 import WinningModal from '../components/Game/WinningModal';
 import ErrorModal from '../components/ErrorModal';
 import Title from '../components/Title';
-import Restart from '../components/Game/Restart';
 import Grid from '../components/Game/Grid';
+import Restart from '../components/Game/Restart';
 import SolveInfo from '../components/Game/SolveInfo';
 import { Game } from '../classes/game';
 import { Controls } from '../classes/controls';
 import { GameSolver } from '../classes/game-solver';
+import { initializeState } from '../utils/initialize-state';
 import { copyGrid } from '../utils/copy-grid';
-import { initialState } from '../data/initialze-grid';
-import type { GameGrid } from '../types/game';
+import type { GameState } from '../types/game-state';
 
 export default function GamePage() {
   const { rows, cols, grid } = useGameSelector(
@@ -20,8 +20,8 @@ export default function GamePage() {
   );
   const solveMethod = useGameSelector((state) => state.mode.data);
 
-  const [gameState, setGameState] = useState<GameGrid>(
-    initialState(copyGrid(grid), solveMethod)
+  const [gameState, setGameState] = useState<GameState>(
+    initializeState(copyGrid(grid), solveMethod)
   );
   const [didWin, setDidWin] = useState(false);
   const [error, setError] = useState<string>();
@@ -30,14 +30,10 @@ export default function GamePage() {
     () => new Game(rows, cols, copyGrid(grid)),
     [rows, cols, grid]
   );
-  const controls = useMemo(
-    () => new Controls(game, setGameState, setDidWin),
-    [game]
-  );
 
   useEffect(() => {
     if (solveMethod === 'USER') {
-      controls.setupControls();
+      new Controls(game, setGameState, setDidWin);
     } else {
       try {
         new GameSolver(game, solveMethod, setGameState, setDidWin);
@@ -46,27 +42,21 @@ export default function GamePage() {
         setError(error.message);
       }
     }
-  }, [game, controls, grid, solveMethod]);
-
-  function handleRestart() {
-    const copiedGrid = copyGrid(grid);
-
-    controls.resetControls();
-    game.setNewGrid(copiedGrid);
-    setGameState(initialState(copiedGrid));
-  }
+  }, [game, solveMethod]);
 
   return (
     <>
       {error && <ErrorModal error={error} />}
       {didWin && <WinningModal moves={gameState.moves} cost={gameState.cost} />}
-      {!didWin && solveMethod === 'USER' && (
-        <Restart onRestart={handleRestart} />
-      )}
+      {!didWin && solveMethod === 'USER' && <Restart />}
 
       <section className="section flex flex-col justify-center items-center">
         <Title />
-        <Grid grid={gameState.cells} />
+        <Grid
+          grid={gameState.cells}
+          prevGrid={gameState.prevGrid}
+          moveDirection={gameState.moveDirection}
+        />
         <SolveInfo gameState={gameState} />
       </section>
     </>

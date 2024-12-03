@@ -1,9 +1,9 @@
 import { useGameSelector } from '../../store/hooks';
 import Info from './Info';
 import { getCostName } from '../../utils/get-cost-name';
-import type { GameGrid } from '../../types/game';
+import type { GameState } from '../../types/game-state';
 
-export default function SolveInfo({ gameState }: { gameState: GameGrid }) {
+export default function SolveInfo({ gameState }: { gameState: GameState }) {
   const { cost, moves, time, totalVisitedStates } = gameState;
 
   const solveMethod = useGameSelector((state) => state.mode.data);

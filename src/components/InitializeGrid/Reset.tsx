@@ -6,14 +6,14 @@ export default function ResetBtn() {
   const dispatch = useGameDispatch();
 
   return (
-    <section className="section absolute top-4 right-4 w-auto p-0">
+    <section className="section absolute top-4 right-4 z-[5] w-auto p-0">
       <button
         onClick={() =>
           dispatch(
             setInitialGame({
               rows: 4,
               cols: 4,
-              grid: generateInitialGrid(4, 4),
+              grid: generateInitialGrid(4, 4)
             })
           )
         }

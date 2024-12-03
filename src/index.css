@@ -29,7 +29,7 @@
   }
 
   .game-grid {
-    @apply w-full grid gap-1 rounded-3xl bg-[#176ac3]/30 p-2;
+    @apply w-full grid gap-1 rounded-[28px] bg-[#176ac3]/30 p-1;
   }
 
   .button {

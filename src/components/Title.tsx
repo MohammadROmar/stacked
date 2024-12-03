@@ -1,8 +1,17 @@
 import { motion } from 'framer-motion';
 
+import { useGameDispatch } from '../store/hooks';
+import { setPage } from '../store/slices/page';
+
 export default function Tiltle() {
+  const dispatch = useGameDispatch();
+
   return (
-    <motion.h1 layoutId="title" className="text-4xl mb-2 drop-shadow-md">
+    <motion.h1
+      layoutId="title"
+      className="text-4xl mb-2 drop-shadow-md"
+      onClick={() => dispatch(setPage('START'))}
+    >
       <span className="text-[#eb584d]">S</span>
       <span className="text-[#176ac3]">T</span>
       <span className="text-[#ff8345]">A</span>

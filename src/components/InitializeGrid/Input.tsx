@@ -9,7 +9,7 @@ type InputProps = {
 export default function Input({ id, value, onChange }: InputProps) {
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     const inputValue = +event.target.value;
-    const newValue = inputValue < 0 ? 1 : inputValue > 6 ? 6 : inputValue;
+    const newValue = inputValue < 0 ? 1 : inputValue > 8 ? 8 : inputValue;
 
     onChange(newValue);
   }
