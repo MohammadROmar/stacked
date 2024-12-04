@@ -2,12 +2,13 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { Game } from './game';
 import { controlKeys } from '../data/contol-keys';
+import { delay } from '../utils/delay';
 import type { GameState } from '../types/game-state';
 import type { MovementDirection } from '../types/movement-direction';
 
 export class Controls {
   public game: Game;
-  public updateGrid: Dispatch<SetStateAction<GameState>>;
+  public updateState: Dispatch<SetStateAction<GameState>>;
   public didWin: (didWin: boolean) => void;
   private startX: number;
   private startY: number;
@@ -15,11 +16,11 @@ export class Controls {
 
   constructor(
     game: Game,
-    updateGrid: Dispatch<SetStateAction<GameState>>,
+    updateState: Dispatch<SetStateAction<GameState>>,
     didWin: (didWin: boolean) => void
   ) {
     this.game = game;
-    this.updateGrid = updateGrid;
+    this.updateState = updateState;
     this.didWin = didWin;
     this.startX = 0;
     this.startY = 0;
@@ -115,8 +116,8 @@ export class Controls {
     }
   };
 
-  private updateGameState() {
-    this.updateGrid((prevState) => ({
+  private async updateGameState() {
+    this.updateState((prevState) => ({
       cells: this.game.copyCurrentState().getGrid(),
       cost: undefined,
       moveDirection: this.prevMovementDir,
@@ -128,6 +129,8 @@ export class Controls {
 
     if (this.game.didWin()) {
       this.removeControls();
+      await delay();
+
       this.didWin(true);
     }
   }

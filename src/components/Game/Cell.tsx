@@ -30,9 +30,7 @@ function Cell({ cell, grid, prevGrid, moveDirection }: AnimatedCellProps) {
 
     const { offsetX, offsetY, merged } = handleMove(
       { x: x + offset.y, y: y + offset.x, symbol },
-      grid,
-      prevGrid,
-      moveDirection
+      { grid, prevGrid, moveDirection }
     );
 
     setOffset((prevOffset) => ({
@@ -51,12 +49,16 @@ function Cell({ cell, grid, prevGrid, moveDirection }: AnimatedCellProps) {
       transition={{ duration: 0.5, type: 'spring' }}
       className="p-0.5 relative"
     >
-      <MergeEffect isVisible={didMerge} setIsVisible={setDidMerge} />
+      <MergeEffect
+        symbol={symbol}
+        isVisible={didMerge}
+        setIsVisible={setDidMerge}
+      />
 
       <img
         src={cellsImages[imageName]}
         className={`w-full aspect-square object-cover object-center ${
-          symbol === '.' ? 'opacity-0' : ''
+          symbol === '.' || symbol === '#' ? 'opacity-0' : ''
         }`}
       />
     </motion.li>

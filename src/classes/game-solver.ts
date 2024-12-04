@@ -5,6 +5,7 @@ import { Queue } from './data-structure/queue';
 import { Stack } from './data-structure/stack';
 import { HashTable } from './data-structure/hash-table';
 import { PriorityQueue } from './data-structure/priority-queue';
+import { delay } from '../utils/delay';
 import type { Grid } from '../types/grid';
 import type { Symbol } from '../types/symbol';
 import type { GameState } from '../types/game-state';
@@ -13,7 +14,7 @@ import type { GameMode } from '../types/game-mode';
 export class GameSolver {
   private initialState: Game;
 
-  private updateGrid: Dispatch<SetStateAction<GameState>>;
+  private updateState: Dispatch<SetStateAction<GameState>>;
   private didWin: (didWin: boolean) => void;
   private solveAlgorithm: GameMode;
 
@@ -25,12 +26,12 @@ export class GameSolver {
   constructor(
     game: Game,
     solveAlgorithm: GameMode,
-    updateGrid: Dispatch<SetStateAction<GameState>>,
+    updateState: Dispatch<SetStateAction<GameState>>,
     didWin: (didWin: boolean) => void
   ) {
     this.initialState = game;
     this.solveAlgorithm = solveAlgorithm;
-    this.updateGrid = updateGrid;
+    this.updateState = updateState;
     this.didWin = didWin;
 
     this.visited = new HashTable<Grid, Grid>();
@@ -344,20 +345,23 @@ export class GameSolver {
     const time = Date.now() - this.startTime;
     const path = this.getPath(winningState);
 
-    this.updateGrid((prevState) => ({
+    this.updateState((prevState) => ({
       ...prevState,
-      cost: visited?.get(this.initialState.getGrid()),
+      cost:
+        this.solveAlgorithm === 'UCS'
+          ? 0
+          : visited?.get(this.initialState.getGrid()),
       totalVisitedStates: this.allStates.size,
       time,
     }));
 
     for (const state of path) {
-      await this.delay();
+      await delay();
 
       const grid = state.copyCurrentState().getGrid();
       const cost = visited?.get(grid);
 
-      this.updateGrid((prevState) => ({
+      this.updateState((prevState) => ({
         prevGrid: prevState.cells,
         moves: prevState.moves + 1,
         cells: grid,
@@ -368,14 +372,10 @@ export class GameSolver {
       }));
 
       if (state.didWin()) {
-        await this.delay(500);
+        await delay();
         this.didWin(true);
         return;
       }
     }
-  }
-
-  private async delay(duration: number = 1000) {
-    await new Promise((resolve) => setTimeout(resolve, duration));
   }
 }

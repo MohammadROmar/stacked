@@ -9,7 +9,7 @@ export default function Tiltle() {
   return (
     <motion.h1
       layoutId="title"
-      className="text-4xl mb-2 drop-shadow-md"
+      className="text-4xl mb-2 drop-shadow-md cursor-pointer"
       onClick={() => dispatch(setPage('START'))}
     >
       <span className="text-[#eb584d]">S</span>

@@ -2,7 +2,7 @@ import { useGameSelector } from '../../store/hooks';
 import { cellsImages } from '../../assets/images/colors';
 
 export default function EmptyGrid() {
-  const { cols, grid } = useGameSelector(state => state.initialGame.data);
+  const { cols, grid } = useGameSelector((state) => state.initialGame.data);
 
   return (
     <ul
@@ -13,7 +13,9 @@ export default function EmptyGrid() {
         cells.map((cell, j) => (
           <li key={i + ' ' + j + ' ' + cell}>
             <img
-              src={cellsImages['empty']}
+              src={
+                cell === '#' ? cellsImages['obstacle'] : cellsImages['empty']
+              }
               className="w-full aspect-square object-cover object-center p-0.5"
             />
           </li>
