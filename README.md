@@ -2,17 +2,26 @@
 
 Slide and stack your way to combine the colors!
 
+> This project uses advanced search algorithms (DFS, BFS, A\*, UCS and others) to solve a given grid.
+
 ---
 
 ## Technologies
 
 - React with TypeScript.
 - Tailwind CSS.
-- Redux Toolkit - state management.
 
 ---
 
-### Links
+### Packages
+
+- Redux Toolkit - state management.
+- Framer Motion - animation.
+- hash it - generate a hash code.
+
+---
+
+#### Links
 
 **Preview live [here](https://stacked-game.vercel.app/)**
 

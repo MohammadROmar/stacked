@@ -34,16 +34,15 @@ export default function Grid({ selectedColor }: InitGridProps) {
               key={`${i} ${j} ${symbol}`}
               onClick={() => {
                 const newGrid = copyGrid(grid);
-                newGrid[i][j] = selectedColor;
+                newGrid[i][j] =
+                  selectedColor === newGrid[i][j] ? '.' : selectedColor;
 
                 dispatch(setInitialGame({ ...gameData, grid: newGrid }));
               }}
             >
               <img
                 src={cellsImages[getImageName(symbol)]}
-                className={`w-full aspect-square object-cover object-center ${
-                  selectedColor !== symbol ? 'cursor-pointer' : ''
-                }`}
+                className="w-full aspect-square object-cover object-center cursor-pointer"
               />
             </motion.li>
           );

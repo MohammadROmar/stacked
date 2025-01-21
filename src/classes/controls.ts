@@ -3,7 +3,6 @@ import type { Dispatch, SetStateAction } from 'react';
 import { Game } from './game';
 import { controlKeys } from '../data/contol-keys';
 import { delay } from '../utils/delay';
-import winAudio from '../assets/audios/win.mp3';
 import type { GameState } from '../models/game-state';
 import type { MovementDirection } from '../models/movement-direction';
 
@@ -131,10 +130,8 @@ export class Controls {
 
     if (this.game.didWin()) {
       this.removeControls();
-      const audio = new Audio(winAudio);
       await delay();
 
-      audio.play();
       this.didWin(true);
     }
   }

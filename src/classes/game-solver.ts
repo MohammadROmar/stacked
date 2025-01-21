@@ -6,7 +6,6 @@ import { Stack } from './data-structure/stack';
 import { HashTable } from './data-structure/hash-table';
 import { PriorityQueue } from './data-structure/priority-queue';
 import { delay } from '../utils/delay';
-import winAudio from '../assets/audios/win.mp3';
 import type { Grid } from '../models/grid';
 import type { Symbol } from '../models/symbol';
 import type { GameState } from '../models/game-state';
@@ -373,10 +372,8 @@ export class GameSolver {
       }));
 
       if (state.didWin()) {
-        const audio = new Audio(winAudio);
         await delay();
 
-        audio.play();
         this.didWin(true);
         return;
       }
