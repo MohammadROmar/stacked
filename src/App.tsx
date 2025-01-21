@@ -5,7 +5,7 @@ import GamePage from './pages/Game';
 import HowToPlayBtn from './components/HowToPlay//HowToPlayBtn';
 
 function App() {
-  const page = useGameSelector(state => state.page.data);
+  const page = useGameSelector((state) => state.page.data);
 
   return (
     <main className="min-h-screen bg-[url(./assets/images/background.jpg)] bg-center bg-cover bg-no-repeat bg-clip-border flex justify-center items-center p-8 py-20 text-white font-river-adventurer overflow-x-hidden">

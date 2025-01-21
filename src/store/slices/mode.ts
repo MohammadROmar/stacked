@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import type { GameMode } from '../../types/game-mode';
+import type { GameMode } from '../../models/game-mode';
 
 const initiaModelState: { data: GameMode } = { data: 'USER' };
 

@@ -1,4 +1,4 @@
-import type { Grid } from '../types/grid';
+import type { Grid } from '../models/grid';
 
 export function copyGrid(grid: Grid): Grid {
   const copiedGrid: Grid = [];

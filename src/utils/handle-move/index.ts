@@ -3,8 +3,8 @@ import { handleMoveRight } from './right';
 import { handleMoveDown } from './down';
 import { handleMoveLeft } from './left';
 import { isColor } from '../is-color';
-import type { Cell } from '../../types/cell';
-import type { MoveInfo } from '../../types/move-info';
+import type { Cell } from '../../models/cell';
+import type { MoveInfo } from '../../models/move-info';
 
 export function handleMove(cell: Cell, moveInfo: MoveInfo) {
   if (!moveInfo.moveDirection || !isColor(cell.symbol)) {

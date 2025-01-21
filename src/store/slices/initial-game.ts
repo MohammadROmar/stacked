@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import { generateInitialGrid } from '../../utils/generate-initial-grid';
-import type { Game } from '../../types/game';
+import type { Game } from '../../models/game';
 
 const initialGameState: { data: Game } = {
   data: { rows: 4, cols: 4, grid: generateInitialGrid(4, 4) },

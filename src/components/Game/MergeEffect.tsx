@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { colors } from '../../data/colors';
-import type { Symbol } from '../../types/symbol';
+import type { Symbol } from '../../models/symbol';
 
 type MergeEffectProps = {
   symbol: Symbol;
@@ -23,8 +23,8 @@ function MergeEffect({ symbol, isVisible, setIsVisible }: MergeEffectProps) {
           onAnimationComplete={() => setIsVisible(false)}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 640 640"
-          stroke="#ffffff80"
-          strokeWidth="3"
+          stroke="#ffffff66"
+          strokeWidth="1.5"
           className="absolute inset-0 z-10"
         >
           <path

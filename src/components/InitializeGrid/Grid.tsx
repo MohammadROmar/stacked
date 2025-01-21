@@ -7,7 +7,7 @@ import { gameCellVariants } from '../../animation/variants/game-cell';
 import { staggeredListAnimation } from '../../animation/staggered-list';
 import { setInitialGame } from '../../store/slices/initial-game';
 import { copyGrid } from '../../utils/copy-grid';
-import type { Symbol } from '../../types/symbol';
+import type { Symbol } from '../../models/symbol';
 
 type InitGridProps = {
   selectedColor: Symbol;
@@ -41,7 +41,9 @@ export default function Grid({ selectedColor }: InitGridProps) {
             >
               <img
                 src={cellsImages[getImageName(symbol)]}
-                className="w-full aspect-square object-cover object-center"
+                className={`w-full aspect-square object-cover object-center ${
+                  selectedColor !== symbol ? 'cursor-pointer' : ''
+                }`}
               />
             </motion.li>
           );

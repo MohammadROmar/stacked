@@ -1,6 +1,6 @@
 import { GameUtils } from './game-utils';
-import type { MovementDirection } from '../../types/movement-direction';
-import type { Grid } from '../../types/grid';
+import type { MovementDirection } from '../../models/movement-direction';
+import type { Grid } from '../../models/grid';
 
 export class GameMovement extends GameUtils {
   protected lastMoveDirection: MovementDirection | undefined;

@@ -6,10 +6,11 @@ import { Stack } from './data-structure/stack';
 import { HashTable } from './data-structure/hash-table';
 import { PriorityQueue } from './data-structure/priority-queue';
 import { delay } from '../utils/delay';
-import type { Grid } from '../types/grid';
-import type { Symbol } from '../types/symbol';
-import type { GameState } from '../types/game-state';
-import type { GameMode } from '../types/game-mode';
+import winAudio from '../assets/audios/win.mp3';
+import type { Grid } from '../models/grid';
+import type { Symbol } from '../models/symbol';
+import type { GameState } from '../models/game-state';
+import type { GameMode } from '../models/game-mode';
 
 export class GameSolver {
   private initialState: Game;
@@ -372,7 +373,10 @@ export class GameSolver {
       }));
 
       if (state.didWin()) {
+        const audio = new Audio(winAudio);
         await delay();
+
+        audio.play();
         this.didWin(true);
         return;
       }

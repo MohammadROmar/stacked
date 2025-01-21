@@ -1,8 +1,8 @@
 import { useGameSelector } from '../../store/hooks';
 import EmptyGrid from './EmptyGrid';
 import Cell from './Cell';
-import type { Grid } from '../../types/grid';
-import type { MovementDirection } from '../../types/movement-direction';
+import type { Grid } from '../../models/grid';
+import type { MovementDirection } from '../../models/movement-direction';
 
 type AnimatedGridProps = {
   grid: Grid;

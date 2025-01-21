@@ -1,4 +1,4 @@
-import type { Symbol } from '../types/symbol';
+import type { Symbol } from '../models/symbol';
 
 export const symbols: Symbol[] = [
   '.',

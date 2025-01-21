@@ -5,9 +5,9 @@ import MergeEffect from './MergeEffect';
 import { getImageName } from '../../utils/get-image-name';
 import { cellsImages } from '../../assets/images/colors';
 import { handleMove } from '../../utils/handle-move';
-import type { Cell } from '../../types/cell';
-import type { Grid } from '../../types/grid';
-import type { MovementDirection } from '../../types/movement-direction';
+import type { Cell } from '../../models/cell';
+import type { Grid } from '../../models/grid';
+import type { MovementDirection } from '../../models/movement-direction';
 
 type AnimatedCellProps = {
   cell: Cell;

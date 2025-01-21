@@ -12,7 +12,7 @@ import { Controls } from '../classes/controls';
 import { GameSolver } from '../classes/game-solver';
 import { initializeState } from '../utils/initialize-state';
 import { copyGrid } from '../utils/copy-grid';
-import type { GameState } from '../types/game-state';
+import type { GameState } from '../models/game-state';
 
 export default function GamePage() {
   const { rows, cols, grid } = useGameSelector(
@@ -32,8 +32,9 @@ export default function GamePage() {
   );
 
   useEffect(() => {
+    const controls = new Controls(game, setGameState, setDidWin);
     if (solveMethod === 'USER') {
-      new Controls(game, setGameState, setDidWin);
+      controls.setupControls();
     } else {
       try {
         new GameSolver(game, solveMethod, setGameState, setDidWin);
@@ -42,6 +43,8 @@ export default function GamePage() {
         setError(error.message);
       }
     }
+
+    return () => controls.removeControls();
   }, [game, solveMethod]);
 
   return (

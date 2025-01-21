@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import type { Page } from '../../types/page';
+import type { Page } from '../../models/page';
 
 const initialPageState: { data: Page } = { data: 'START' };
 

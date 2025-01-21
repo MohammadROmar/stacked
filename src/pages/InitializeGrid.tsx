@@ -7,7 +7,7 @@ import ColorSelectorBtn from '../components/InitializeGrid/ColorSelectorBtn';
 import SelectedColor from '../components/InitializeGrid/SelectedColor';
 import StartBtn from '../components/InitializeGrid/StartBtn';
 import ResetBtn from '../components/InitializeGrid/Reset';
-import type { Symbol } from '../types/symbol';
+import type { Symbol } from '../models/symbol';
 
 export default function InitializeGridPage() {
   const [selectedColor, setSelectedColor] = useState<Symbol>('.');

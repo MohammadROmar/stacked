@@ -3,13 +3,14 @@ import type { Dispatch, SetStateAction } from 'react';
 import { Game } from './game';
 import { controlKeys } from '../data/contol-keys';
 import { delay } from '../utils/delay';
-import type { GameState } from '../types/game-state';
-import type { MovementDirection } from '../types/movement-direction';
+import winAudio from '../assets/audios/win.mp3';
+import type { GameState } from '../models/game-state';
+import type { MovementDirection } from '../models/movement-direction';
 
 export class Controls {
-  public game: Game;
-  public updateState: Dispatch<SetStateAction<GameState>>;
-  public didWin: (didWin: boolean) => void;
+  private game: Game;
+  private updateState: Dispatch<SetStateAction<GameState>>;
+  private didWin: (didWin: boolean) => void;
   private startX: number;
   private startY: number;
   private prevMovementDir: MovementDirection | undefined;
@@ -126,11 +127,14 @@ export class Controls {
       prevGrid: prevState.cells,
       time: undefined,
     }));
+    await delay();
 
     if (this.game.didWin()) {
       this.removeControls();
+      const audio = new Audio(winAudio);
       await delay();
 
+      audio.play();
       this.didWin(true);
     }
   }
@@ -147,7 +151,7 @@ export class Controls {
     }
   }
 
-  private removeControls() {
+  public removeControls() {
     document.removeEventListener('keydown', this.keydownEvent);
     document.removeEventListener('touchstart', this.touchStartEvent);
     document.removeEventListener('touchmove', this.touchMoveEvent);

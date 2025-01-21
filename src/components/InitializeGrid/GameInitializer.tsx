@@ -2,7 +2,7 @@ import { useGameDispatch, useGameSelector } from '../../store/hooks';
 import Grid from './Grid';
 import Input from './Input';
 import { generateInitialGrid } from '../../utils/generate-initial-grid';
-import type { GameInitializerProps } from '../../types/game-initializer';
+import type { GameInitializerProps } from '../../models/game-initializer';
 import { setInitialGame } from '../../store/slices/initial-game';
 
 export default function GameInitializer({

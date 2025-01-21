@@ -1,7 +1,7 @@
 import { isColor } from '../is-color';
-import type { Symbol } from '../../types/symbol';
-import type { Cell } from '../../types/cell';
-import type { MoveInfo } from '../../types/move-info';
+import type { Symbol } from '../../models/symbol';
+import type { Cell } from '../../models/cell';
+import type { MoveInfo } from '../../models/move-info';
 
 export function handleMoveUp(cell: Cell, moveInfo: MoveInfo) {
   const { x, y, symbol } = cell;

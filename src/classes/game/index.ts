@@ -1,5 +1,5 @@
 import { GameMovement } from './game-movement';
-import type { Grid } from '../../types/grid';
+import type { Grid } from '../../models/grid';
 
 export class Game extends GameMovement {
   constructor(rows: number, cols: number, grid: Grid) {

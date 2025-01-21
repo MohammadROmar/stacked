@@ -1,7 +1,7 @@
 import { useGameSelector } from '../../store/hooks';
 import Info from './Info';
 import { getCostName } from '../../utils/get-cost-name';
-import type { GameState } from '../../types/game-state';
+import type { GameState } from '../../models/game-state';
 
 export default function SolveInfo({ gameState }: { gameState: GameState }) {
   const { cost, moves, time, totalVisitedStates } = gameState;

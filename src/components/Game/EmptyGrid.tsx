@@ -6,6 +6,7 @@ export default function EmptyGrid() {
 
   return (
     <ul
+      aria-hidden
       className="game-grid gap-0"
       style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
     >

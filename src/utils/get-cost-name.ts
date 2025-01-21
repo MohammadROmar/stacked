@@ -1,4 +1,4 @@
-import { GameMode } from '../types/game-mode';
+import { GameMode } from '../models/game-mode';
 
 export function getCostName(solveAlgorithm: GameMode) {
   if (solveAlgorithm === 'A*') {

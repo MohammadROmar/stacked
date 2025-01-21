@@ -1,4 +1,4 @@
-import type { Game } from '../types/game';
+import type { Game } from '../models/game';
 
 export function isEmptyGrid(gridData: Game) {
   let emptyCells = 0;

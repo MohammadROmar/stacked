@@ -1,6 +1,6 @@
 import { cellsImages } from '../../assets/images/colors';
 import { getImageName } from '../../utils/get-image-name';
-import type { Symbol } from '../../types/symbol';
+import type { Symbol } from '../../models/symbol';
 
 export default function SelectedColor({
   selectedColor,

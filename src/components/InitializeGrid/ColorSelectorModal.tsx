@@ -27,7 +27,7 @@ export default function ColorsModal({
           >
             <img
               src={cellsImages[getImageName(symbol)]}
-              className="aspect-square"
+              className="aspect-square cursor-pointer"
             />
           </li>
         ))}

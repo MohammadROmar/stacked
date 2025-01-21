@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 import ColorsModal from './ColorSelectorModal';
-import type { Symbol } from '../../types/symbol';
+import type { Symbol } from '../../models/symbol';
 
 export type ColorsSelectorProps = {
   setSelectedColor(newColor: Symbol): void;
